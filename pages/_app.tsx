@@ -4,7 +4,7 @@ import Head from "next/head"
 // global styles
 import "../styles/globals.scss"
 
-import yourMantineTheme from "../themes/default"
+import yourMantineTheme from "../themes/mantine"
 import { MantineProvider, ColorScheme, ColorSchemeProvider } from "@mantine/core"
 
 export default function App(props: AppProps & { colorScheme: ColorScheme }) {

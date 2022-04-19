@@ -9,6 +9,7 @@ packages/react-refresh-utils/**/*.js
 packages/react-refresh-utils/**/*.d.ts
 packages/react-dev-overlay/lib/**
 **/__tmp__/**
+lerna.json
 .github/actions/next-stats-action/.work
 packages/next-swc/crates/**/*
 packages/next-codemod/transforms/__testfixtures__/**/*
