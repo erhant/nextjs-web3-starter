@@ -12,37 +12,52 @@ const chainIDs: number[] = [
   43114, // Avalanche C-Chain (AVAX)
 ]
 
-export default chainIDs
-
 // TODO: add chains above like this one below (hex)
-export const networkParams: {
-  [key: string]: {
-    chainId: string // hexadecimal
-    rpcUrls: string[]
+const networks: {
+  [chainId: string]: {
     chainName: string
     nativeCurrency: {
       name: string
       decimals: number
       symbol: string
     }
-    blockExplorerUrls: string[]
-    iconUrls: string[]
   }
 } = {
-  "0x63564c40": {
-    chainId: "0x63564c40",
-    rpcUrls: ["https://api.harmony.one"],
-    chainName: "Harmony Mainnet",
-    nativeCurrency: { name: "ONE", decimals: 18, symbol: "ONE" },
-    blockExplorerUrls: ["https://explorer.harmony.one"],
-    iconUrls: ["https://harmonynews.one/wp-content/uploads/2019/11/slfdjs.png"],
+  // Ethereum Mainnet
+  "1": {
+    chainName: "Ethereum Mainnet",
+    nativeCurrency: { name: "ETH", decimals: 18, symbol: "ETH" },
   },
-  "0xa4ec": {
-    chainId: "0xa4ec",
-    rpcUrls: ["https://forno.celo.org"],
-    chainName: "Celo Mainnet",
-    nativeCurrency: { name: "CELO", decimals: 18, symbol: "CELO" },
-    blockExplorerUrls: ["https://explorer.celo.org"],
-    iconUrls: ["https://celo.org/images/marketplace-icons/icon-celo-CELO-color-f.svg"],
+  // Binance Smart Chain
+  "56": {
+    chainName: "Binance Smart Chain Mainnet",
+    nativeCurrency: { name: "BNB", decimals: 18, symbol: "BNB" },
+  },
+  // Avalanche C-Chain
+  "43114": {
+    chainName: "Avalanche C-Chain",
+    nativeCurrency: { name: "AVAX", decimals: 18, symbol: "AVAX" },
+  },
+  // Fantom Opera
+  "250": {
+    chainName: "Fantom Opera",
+    nativeCurrency: { name: "FTM", decimals: 18, symbol: "FTM" },
+  },
+  // Polygon Mainnet
+  "137": {
+    chainName: "Polygon Mainnet",
+    nativeCurrency: { name: "MATIC", decimals: 18, symbol: "MATIC" },
+  },
+  // Moonriver
+  "1285": {
+    chainName: "Moonriver",
+    nativeCurrency: { name: "MOVR", decimals: 18, symbol: "MOVR" },
+  },
+  // Moonbeam
+  "1284": {
+    chainName: "Moonbeam",
+    nativeCurrency: { name: "GLMR", decimals: 18, symbol: "GLMR" },
   },
 }
+
+export default networks

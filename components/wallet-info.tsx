@@ -1,28 +1,36 @@
-import { Text, Stack } from "@mantine/core"
+import { Text, Stack, Title } from "@mantine/core"
+import { BigNumber } from "ethers"
+import { formatEther } from "ethers/lib/utils"
+import { useEffect, useState } from "react"
 import { useWeb3Context } from "../context/web3.context"
-
-function truncateAccount(acc: string): string {
-  return acc.slice(0, 5) + "..." + acc.slice(-3)
-}
+import { truncateAccount } from "../utils"
 
 const WalletInfo = () => {
-  const { account, network, active } = useWeb3Context()
+  const { account, chainId, active, library } = useWeb3Context()
+  const [balance, setBalance] = useState<BigNumber>(BigNumber.from(0))
+
+  useEffect(() => {
+    if (active && account !== undefined && library !== undefined) {
+      library.getBalance(account).then((val) => setBalance(val))
+    }
+  }, [chainId])
+
   if (active) {
     return (
-      <Stack sx={{ textAlign: "center" }} my="lg">
+      <Stack sx={{ textAlign: "center" }}>
         <Text>
-          <b>Wallet</b>: {account}
+          <b>Wallet</b>: {truncateAccount(account!)}
         </Text>
         <Text>
-          <b>Chain ID</b>: {network?.chainId}{" "}
+          <b>Chain ID</b>: {chainId}
         </Text>
         <Text>
-          <b>Network</b>: {network?.name}{" "}
+          <b>Balance</b>: {formatEther(balance)}
         </Text>
       </Stack>
     )
   } else {
-    return <Text>Please connect your wallet first.</Text>
+    return <Title sx={{ textAlign: "center" }}>Please connect your wallet first.</Title>
   }
 }
 

@@ -7,8 +7,8 @@ My Web3 frontend starter kit.
 - [x] Uses Mantine AppShell to have a layout component.
 - [x] Supports light/dark theme switching via Mantine.
 - [x] Mantine Theme override provided.
-- [ ] Web3 integration setup.
-- [ ] Add known networks as [constant](./constants/networks.ts).
+- [x] Web3 integration setup.
+- [ ] Add known networks as [constant](./constants/networks.ts). You might find this as a library somewhere. Same for tokens.
 
 ## Resources
 
