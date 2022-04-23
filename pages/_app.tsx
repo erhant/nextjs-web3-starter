@@ -3,9 +3,10 @@ import { useState } from "react"
 import Head from "next/head"
 // global styles
 import "../styles/globals.scss"
-
+// mantine theming
 import yourMantineTheme from "../themes/mantine"
 import { MantineProvider, ColorScheme, ColorSchemeProvider } from "@mantine/core"
+import { Web3ContextWrapper } from "../context/web3.context"
 
 export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   const { Component, pageProps } = props
@@ -34,7 +35,9 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
             // you can change primaryColor w.r.t colorScheme here
           }}
         >
-          <Component {...pageProps} />
+          <Web3ContextWrapper>
+            <Component {...pageProps} />
+          </Web3ContextWrapper>
         </MantineProvider>
       </ColorSchemeProvider>
     </>
