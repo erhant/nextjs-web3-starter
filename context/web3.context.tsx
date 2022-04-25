@@ -1,7 +1,6 @@
 import { createContext, ReactChild, useContext, useState, useEffect } from "react"
 import Web3Modal from "web3modal"
 import { ethers } from "ethers"
-import networks from "../constants/networks"
 import { BaseProvider } from "@ethersproject/providers"
 import { hexToDecimal } from "../utils"
 
@@ -23,7 +22,7 @@ type Web3ContextType = {
 const Web3Context = createContext<Web3ContextType>({
   // see if the wallet is active or not
   active: false,
-  setActive: (isActive: boolean) => {},
+  setActive: (active: boolean) => {},
   // network
   network: undefined,
   setNetwork: (network: ethers.providers.Network) => {},
@@ -39,7 +38,7 @@ const Web3Context = createContext<Web3ContextType>({
   // connect wallet
   connectWallet: async () => {},
   // disconnect wallet, resets most states above
-  disconnectWallet: async () => {},
+  disconnectWallet: () => {},
 })
 
 // wrapper for _app.tsx
@@ -58,7 +57,6 @@ export const Web3ContextWrapper = ({ children }: { children: ReactChild }) => {
     setWeb3Modal(new Web3Modal())
   }, [])
 
-  // connect the injected wallet (prompts user)
   const connectWallet = async () => {
     if (!web3Modal) return
     try {

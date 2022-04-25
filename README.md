@@ -1,4 +1,4 @@
-# NextJS + TS + MantineUI Starter
+# NextJS + TS + MantineUI + Web3 Starter
 
 My Web3 frontend starter kit.
 
@@ -7,8 +7,7 @@ My Web3 frontend starter kit.
 - [x] Uses Mantine AppShell to have a layout component.
 - [x] Supports light/dark theme switching via Mantine.
 - [x] Mantine Theme override provided.
-- [x] Web3 integration setup.
-- [ ] Add known networks as [constant](./constants/networks.ts). You might find this as a library somewhere. Same for tokens.
+- [x] Web3 Injected Wallet integrated with a context.
 
 ## Resources
 
