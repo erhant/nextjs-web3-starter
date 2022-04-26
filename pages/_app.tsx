@@ -7,6 +7,7 @@ import "../styles/globals.scss"
 import yourMantineTheme from "../themes/mantine"
 import { MantineProvider, ColorScheme, ColorSchemeProvider } from "@mantine/core"
 import { Web3ContextWrapper } from "../context/web3.context"
+import { NotificationsProvider } from "@mantine/notifications"
 
 export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   const { Component, pageProps } = props
@@ -15,7 +16,7 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   const toggleColorScheme = (value?: ColorScheme) => {
     const nextColorScheme = value || (colorScheme === "dark" ? "light" : "dark")
     setColorScheme(nextColorScheme)
-    // NOTE: if you want, set cookie here
+    // NOTE: if you want to, set cookie here
   }
 
   return (
@@ -36,7 +37,9 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
           }}
         >
           <Web3ContextWrapper>
-            <Component {...pageProps} />
+            <NotificationsProvider>
+              <Component {...pageProps} />
+            </NotificationsProvider>
           </Web3ContextWrapper>
         </MantineProvider>
       </ColorSchemeProvider>

@@ -2,7 +2,8 @@ import { createContext, ReactChild, useContext, useState, useEffect } from "reac
 import Web3Modal from "web3modal"
 import { ethers } from "ethers"
 import { BaseProvider } from "@ethersproject/providers"
-import { hexToDecimal } from "../utils"
+import { hexToDecimal, truncateAccount } from "../utils"
+import notify from "../utils/notify"
 
 type Web3ContextType = {
   active: boolean
@@ -63,7 +64,7 @@ export const Web3ContextWrapper = ({ children }: { children: ReactChild }) => {
       const provider = await web3Modal.connect()
       const library = new ethers.providers.Web3Provider(
         provider,
-        "any" // important! https://github.com/NoahZinsmeister/web3-react/issues/127
+        "any" // important for switching networks! https://github.com/NoahZinsmeister/web3-react/issues/127
       )
       const accounts = await library.listAccounts()
       const network = await library.getNetwork()
@@ -71,15 +72,13 @@ export const Web3ContextWrapper = ({ children }: { children: ReactChild }) => {
       setProvider(provider)
       setLibrary(library)
 
-      // TODO: is this safe?
       if (accounts) setAccount(accounts[0])
       setNetwork(network)
       setChainId(network.chainId)
 
       setActive(true)
     } catch (error) {
-      // TODO: better error handle
-      console.error(error)
+      notify("Error", "Could not connect wallet properly!", "error")
     }
   }
 
@@ -91,8 +90,7 @@ export const Web3ContextWrapper = ({ children }: { children: ReactChild }) => {
       setNetwork(undefined)
       setActive(false)
     } catch (error) {
-      // TODO: better error handle
-      console.error(error)
+      notify("Error", "Could not disconnect wallet properly!", "error")
     }
   }
 
@@ -100,17 +98,24 @@ export const Web3ContextWrapper = ({ children }: { children: ReactChild }) => {
   useEffect(() => {
     if (provider?.on) {
       const handleAccountsChanged = (accounts: string[]) => {
-        console.log("accountsChanged", accounts)
-        if (accounts) setAccount(accounts[0])
+        if (accounts) {
+          notify(
+            "Account Change",
+            `You have changed from ${truncateAccount(account!)} to ${truncateAccount(accounts[0])}.`,
+            "info"
+          )
+          setAccount(accounts[0])
+        }
       }
 
       const handleChainChanged = (chainId: number) => {
         setChainId(hexToDecimal(chainId))
+        notify("Network Change", "You have changed to chain " + hexToDecimal(chainId), "success")
       }
 
       const handleDisconnect = () => {
-        console.log("wallet disconnect")
         disconnectWallet()
+        notify("Wallet Disconnect", "You have disconnected your wallet.", "success")
       }
 
       // attach listeners
