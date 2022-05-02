@@ -55,6 +55,11 @@ const _networks: {
     nativeCurrency: { name: "AVAX", decimals: 18, symbol: "AVAX" },
     iconURL: "https://cryptologos.cc/logos/avalanche-avax-logo.svg",
   },
+  "43113": {
+    chainName: "Avalanche FUJI C-Chain",
+    nativeCurrency: { name: "AVAX", decimals: 18, symbol: "AVAX" },
+    iconURL: "https://cryptologos.cc/logos/avalanche-avax-logo.svg",
+  },
   // Fantom Opera
   "250": {
     chainName: "Fantom Opera",
@@ -64,6 +69,11 @@ const _networks: {
   // Polygon
   "137": {
     chainName: "Polygon Mainnet",
+    nativeCurrency: { name: "MATIC", decimals: 18, symbol: "MATIC" },
+    iconURL: "https://cryptologos.cc/logos/polygon-matic-logo.svg",
+  },
+  "80001": {
+    chainName: "Mumbai Testnet",
     nativeCurrency: { name: "MATIC", decimals: 18, symbol: "MATIC" },
     iconURL: "https://cryptologos.cc/logos/polygon-matic-logo.svg",
   },
@@ -77,6 +87,17 @@ const _networks: {
   "1284": {
     chainName: "Moonbeam",
     nativeCurrency: { name: "GLMR", decimals: 18, symbol: "GLMR" },
+    iconURL: unknownIconURL,
+  },
+  // Aurora
+  "1313161554": {
+    chainName: "Aurora",
+    nativeCurrency: { name: "ETH", decimals: 18, symbol: "ETH" },
+    iconURL: unknownIconURL,
+  },
+  "1313161555": {
+    chainName: "Aurora Testnet",
+    nativeCurrency: { name: "ETH", decimals: 18, symbol: "ETH" },
     iconURL: unknownIconURL,
   },
 }

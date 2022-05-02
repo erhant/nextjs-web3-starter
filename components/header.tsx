@@ -1,13 +1,10 @@
-import { Box, Container, Text, Group, Button } from "@mantine/core"
+import { Box, Container, Text, Group } from "@mantine/core"
 import ThemeToggleButton from "../components/theme-toggle-button"
 import WalletConnectionButton from "./wallet-connection-button"
-import { useWeb3Context } from "../context/web3.context"
-import { Wallet } from "tabler-icons-react"
 import Link from "next/link"
+import WalletDisplayButton from "./wallet-display-button"
 
 const Header = () => {
-  const { active } = useWeb3Context()
-
   return (
     <Box component="header" py="md" sx={{ textAlign: "center", borderBottom: "1px solid lightgray" }}>
       <Container>
@@ -24,13 +21,7 @@ const Header = () => {
           <span style={{ flexGrow: 1 }} />
 
           <WalletConnectionButton />
-
-          <Link href="/wallet" passHref>
-            <Button disabled={!active} variant="subtle" size="xs">
-              <Wallet />
-            </Button>
-          </Link>
-
+          <WalletDisplayButton />
           <ThemeToggleButton />
         </Group>
       </Container>
