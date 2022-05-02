@@ -1,22 +1,23 @@
 import { showNotification } from "@mantine/notifications"
+import { ReactNode } from "react"
 import { X, InfoCircle, Check } from "tabler-icons-react"
 
 const ICONSIZE = 18
-const notify = (title: string, message: string, variant: "error" | "info" | "success") => {
-  let icon = undefined
-  if (variant === "error") icon = <X size={ICONSIZE} />
-  if (variant === "info") icon = <InfoCircle size={ICONSIZE} />
-  if (variant === "success") icon = <Check size={ICONSIZE} />
 
-  let color = undefined
-  if (variant === "error") color = "red"
-  if (variant === "info") color = "yellow"
-  if (variant === "success") color = "green"
+const notify = (title: ReactNode, message: ReactNode, variant: "error" | "info" | "success") => {
   showNotification({
     title: title,
     message: message,
-    icon: icon,
-    color: color,
+    icon: {
+      error: <X size={ICONSIZE} />,
+      info: <InfoCircle size={ICONSIZE} />,
+      success: <Check size={ICONSIZE} />,
+    }[variant],
+    color: {
+      error: "red",
+      info: "yellow",
+      success: "green",
+    }[variant],
   })
 }
 
