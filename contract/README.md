@@ -1,26 +1,61 @@
-# Basic Sample Hardhat Project
+# Typescript Solidity Dev Starter Kit
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts.
+_Updated to use Hardhat!_
 
-Try running some of the following tasks:
+This is a starter kit for developing, testing, and deploying smart contracts with a full Typescript environment. This stack uses [Hardhat](https://hardhat.org) as the platform layer to orchestrate all the tasks. [Ethers](https://docs.ethers.io/v5/) is used for all Ethereum interactions and testing.
 
-```shell
-npx hardhat accounts
-npx hardhat compile
-npx hardhat clean
-npx hardhat test
-npx hardhat node
-node scripts/sample-script.js
-npx hardhat help
-```
+[Blog Post](https://medium.com/@rahulsethuram/the-new-solidity-dev-stack-buidler-ethers-waffle-typescript-tutorial-f07917de48ae)
 
-# Usage Scenario
+## Using this Project
 
-1. Write your contract under [contracts](./contracts/).
-2. Compile it via `npx hardhat compile`.
-3. Deploy the compiled contract.
-   - Use `npx hardhat run ./scripts/deploy-greeter.js`.
-   - Or start local network via `npx hardhat node` and then deploy with `npx hardhat run ./scripts/deploy-greeter.js --network localhost` ([see more](https://hardhat.org/getting-started/#connecting-a-wallet-or-dapp-to-hardhat-network))
-4. Test the deployed contract via `npx hardhat test`.
+Clone this repository, then install the dependencies with `npm install`. Build everything with `npm run build`. https://hardhat.org has excellent docs, and can be used as reference for extending this project.
 
-By default, `hardhat` runs a local network to deploy the contract. To use this local network with a frontend, you can deploy via `npx hardhat run ./scripts/deploy-greeter.js`
+## Available Functionality
+
+### Build Contracts and Generate Typechain Typeings
+
+`npm run compile`
+
+### Run Contract Tests & Get Callstacks
+
+In one terminal run `npx hardhat node`
+
+Then in another run `npm run test`
+
+Notes:
+
+- The gas usage table may be incomplete (the gas report currently needs to run with the `--network localhost` flag; see below).
+
+### Run Contract Tests and Generate Gas Usage Report
+
+In one terminal run `npx hardhat node`
+
+Then in another run `npm run test -- --network localhost`
+
+Notes:
+
+- When running with this `localhost` option, you get a gas report but may not get good callstacks
+- See [here](https://github.com/cgewecke/eth-gas-reporter#installation-and-config) for how to configure the gas usage report.
+
+### Run Coverage Report for Tests
+
+`npm run coverage`
+
+Notes:
+
+- running a coverage report currently deletes artifacts, so after each coverage run you will then need to run `npx hardhat clean` followed by `npm run build` before re-running tests
+- the branch coverage is 75%
+
+### Deploy to Ethereum
+
+Create/modify network config in `hardhat.config.ts` and add API key and private key, then run:
+
+`npx hardhat run --network rinkeby scripts/deploy.ts`
+
+### Verify on Etherscan
+
+Using the [hardhat-etherscan plugin](https://hardhat.org/plugins/nomiclabs-hardhat-etherscan.html), add Etherscan API key to `hardhat.config.ts`, then run:
+
+`npx hardhat verify --network rinkeby <DEPLOYED ADDRESS>`
+
+PRs and feedback welcome!
