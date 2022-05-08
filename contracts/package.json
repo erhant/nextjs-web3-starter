@@ -8,8 +8,7 @@
     "clean": "npx hardhat clean",
     "compile": "npx hardhat compile",
     "test": "npx hardhat test",
-    "coverage": "npm run build && npx hardhat coverage --temp artifacts --network coverage",
-    "postinstall": "typechain"
+    "coverage": "npm run build && npx hardhat coverage --temp artifacts --network coverage"
   },
   "repository": {
     "type": "git",
@@ -31,7 +30,7 @@
     "@types/chai": "^4.2.18",
     "@types/chai-as-promised": "^7.1.1",
     "@types/mocha": "^8.2.2",
-    "@types/node": "^15.0.3",
+    "@types/node": "^15.14.9",
     "chai": "^4.3.4",
     "chai-as-promised": "^7.1.1",
     "dotenv": "^9.0.2",

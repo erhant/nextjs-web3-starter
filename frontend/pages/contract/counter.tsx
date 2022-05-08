@@ -6,11 +6,12 @@ import Layout from "../../components/layout"
 import { Button, Text, Group, Title } from "@mantine/core"
 import getNetwork from "../../constants/networks"
 import notify from "../../utils/notify"
-import { ArrowUpCircle, ArrowDownCircle } from "tabler-icons-react"
+import { ArrowUpCircle, ArrowDownCircle, Refresh } from "tabler-icons-react"
+import { BigNumber, ethers } from "ethers"
 
-// Contract deployment address
+// Contract deployment address(es)
 const CONTRACT_ADDRESS: Readonly<{ [network: string]: string }> = {
-  localhost: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
+  localhost: "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
 }
 
 const CounterContract: NextPage = () => {
@@ -18,7 +19,7 @@ const CounterContract: NextPage = () => {
   const { wallet } = useWeb3Context()
   const [contract, setContract] = useState<CounterType>()
   // contract view states
-  const [count, setCount] = useState<number>(0)
+  const [count, setCount] = useState(0)
 
   // load contract on first load
   useEffect(() => {
@@ -33,6 +34,8 @@ const CounterContract: NextPage = () => {
         )
         notify("Contract Connected", "Connected to " + CONTRACT_ADDRESS[network.chainName], "success")
       }
+    } else {
+      if (contract) setContract(undefined)
     }
   }, [wallet])
 
@@ -45,59 +48,82 @@ const CounterContract: NextPage = () => {
         (err) => notify("getCount", err.message, "error")
       )
 
-      // event subscriptions
-      // TODO
+      // events
+      contract.on(ethers.utils.id("CountedTo(uint256)"), listenCountedTo)
     }
 
     return () => {
       if (contract) {
-        contract.removeAllListeners()
+        contract.off(ethers.utils.id("CountedTo(uint256)"), listenCountedTo)
       }
     }
   }, [contract])
 
+  const listenCountedTo = (newCount: BigNumber) => {
+    notify("Event Listened", "CountedTo event returned " + newCount.toNumber(), "info")
+    setCount(newCount.toNumber())
+  }
   // Refresh the count (alternative to events)
   const handleRefresh = async () => {
     if (contract) {
-      const count = await contract.getCount()
-      setCount(count.toNumber())
+      try {
+        const count = await contract.getCount()
+        setCount(count.toNumber())
+      } catch (err: any) {
+        notify("Error", err.data.message, "error")
+      }
     }
   }
 
   // Increment counter
   const handleCountUp = async () => {
     if (contract) {
-      const tx = await contract.countUp()
-      notify("Transaction", tx.hash, "info")
-      await tx.wait()
-      notify("Transaction", "Counted up!", "success")
+      try {
+        const tx = await contract.countUp()
+        notify("Transaction", tx.hash, "info")
+        await tx.wait()
+        notify("Transaction", "Counted up!", "success")
+      } catch (err: any) {
+        notify("Error", err.data.message, "error")
+      }
     }
   }
 
   // Decrement counter
   const handleCountDown = async () => {
     if (contract) {
-      const tx = await contract.countDown()
-      notify("Transaction", tx.hash, "info")
-      await tx.wait()
-      notify("Transaction", "Counted down!", "success")
+      try {
+        const tx = await contract.countDown()
+        notify("Transaction", tx.hash, "info")
+        await tx.wait()
+        notify("Transaction", "Counted down!", "success")
+      } catch (err: any) {
+        console.log(err)
+        notify("Error", err.data.message, "error")
+      }
     }
   }
   return (
     <Layout>
       {contract ? (
-        <Group my="xl">
-          <Text component="pre" inline>
-            {count}
-          </Text>
-          <Button onClick={handleCountUp}>
-            <ArrowUpCircle />
-          </Button>
-          <Button onClick={handleCountDown}>
-            <ArrowDownCircle />
-          </Button>
-          <Button onClick={handleRefresh}>R</Button>
-        </Group>
+        <>
+          <Group my="xl" position="center">
+            <Text size="xl" sx={{ textAlign: "center" }}>
+              <b>Count:</b> {count}
+            </Text>
+          </Group>
+          <Group my="xl" position="center">
+            <Button onClick={handleCountUp} color="secondary">
+              <ArrowUpCircle />
+            </Button>
+            <Button onClick={handleCountDown} color="secondary">
+              <ArrowDownCircle />
+            </Button>
+            <Button onClick={handleRefresh}>
+              <Refresh />
+            </Button>
+          </Group>
+        </>
       ) : (
         <Title p="xl">Please connect your wallet first.</Title>
       )}

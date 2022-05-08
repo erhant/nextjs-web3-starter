@@ -24,10 +24,6 @@ const config: HardhatUserEtherscanConfig = {
   solidity: {
     compilers: [{ version: "0.8.5", settings: {} }],
   },
-  // redirect artifact output for the frontend
-  paths: {
-    artifacts: "../frontend/artifacts",
-  },
   // redirect typechain output for the frontend
   typechain: {
     outDir: "../frontend/types/typechain",

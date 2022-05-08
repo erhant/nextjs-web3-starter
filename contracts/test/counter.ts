@@ -1,7 +1,7 @@
 import { ethers } from "hardhat"
 import chai from "chai"
 import chaiAsPromised from "chai-as-promised"
-import { Counter__factory, Counter } from "../typechain"
+import { Counter__factory, Counter } from "../../frontend/types/typechain"
 
 chai.use(chaiAsPromised)
 const { expect } = chai
@@ -36,7 +36,10 @@ describe("Counter", () => {
   describe("count down", async () => {
     // 5
     it("should fail due to underflow exception", () => {
-      return expect(counter.countDown()).to.eventually.be.rejectedWith(Error, "Uint256 underflow")
+      return expect(counter.countDown()).to.eventually.be.rejectedWith(
+        Error,
+        "VM Exception while processing transaction: reverted with panic code 0x11 (Arithmetic operation underflowed or overflowed outside of an unchecked block)"
+      )
     })
 
     it("should count down", async () => {
