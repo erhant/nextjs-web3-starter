@@ -1,94 +1,80 @@
-import { createContext, ReactChild, useContext, useState, useEffect } from "react"
+import { createContext, ReactChild, useContext, useState, useEffect, FC } from "react"
 import Web3Modal from "web3modal"
 import { ethers } from "ethers"
 import { BaseProvider } from "@ethersproject/providers"
 import { hexToDecimal, truncateAccount } from "../utils"
 import notify from "../utils/notify"
 
+type WalletType = {
+  network: ethers.providers.Network // Current network
+  provider: BaseProvider // Provider
+  chainId: number // Current chain ID (decimal)
+  library: ethers.providers.Web3Provider
+  address: string // Address of this wallet (i.e. account)
+}
 type Web3ContextType = {
-  active: boolean
-  setActive: (isActive: boolean) => void
-  network: ethers.providers.Network | undefined
-  setNetwork: (network: ethers.providers.Network) => void
-  chainId: number | undefined
-  setChainId: (id: number) => void
-  library: ethers.providers.Web3Provider | undefined
-  setLibrary: (library: ethers.providers.Web3Provider) => void
-  account: string | undefined
-  setAccount: (acc: string) => void
   connectWallet: () => Promise<void>
   disconnectWallet: () => void
+  wallet: WalletType | undefined
 }
 
 const Web3Context = createContext<Web3ContextType>({
-  // see if the wallet is active or not
-  active: false,
-  setActive: (active: boolean) => {},
-  // network
-  network: undefined,
-  setNetwork: (network: ethers.providers.Network) => {},
-  // chainId
-  chainId: undefined,
-  setChainId: (id: number) => {},
-  // library (used to request methods)
-  library: undefined,
-  setLibrary: (library: ethers.providers.Web3Provider) => {},
-  // account (has the walletID)
-  account: undefined,
-  setAccount: (acc: string) => {},
-  // connect wallet
   connectWallet: async () => {},
-  // disconnect wallet, resets most states above
   disconnectWallet: () => {},
+  wallet: undefined,
 })
 
 // wrapper for _app.tsx
-export const Web3ContextWrapper = ({ children }: { children: ReactChild }) => {
+export const Web3ContextWrapper: FC<{ children: ReactChild }> = ({ children }) => {
   const [web3Modal, setWeb3Modal] = useState<Web3Modal>()
-  const [provider, setProvider] = useState<BaseProvider>()
-  const [library, setLibrary] = useState<ethers.providers.Web3Provider>()
-  const [account, setAccount] = useState<string>()
-  const [network, setNetwork] = useState<ethers.providers.Network>()
-  const [chainId, setChainId] = useState<number>()
-  const [active, setActive] = useState<boolean>(false)
+  const [wallet, setWallet] = useState<WalletType>()
 
   // set the Web3Modal on first load
   useEffect(() => {
     // opt: give providers
     setWeb3Modal(new Web3Modal())
+
+    return () => {
+      setWeb3Modal(undefined)
+    }
   }, [])
 
+  /**
+   * Wallet connector function. Retrieves the provider from Web3Modal, and then populates the web3 context.t
+   */
   const connectWallet = async () => {
-    if (!web3Modal) return
     try {
-      const provider = await web3Modal.connect()
+      const provider = await web3Modal!.connect()
       const library = new ethers.providers.Web3Provider(
         provider,
         "any" // important for switching networks! https://github.com/NoahZinsmeister/web3-react/issues/127
       )
       const accounts = await library.listAccounts()
       const network = await library.getNetwork()
-
-      setProvider(provider)
-      setLibrary(library)
-
-      if (accounts) setAccount(accounts[0])
-      setNetwork(network)
-      setChainId(network.chainId)
-
-      setActive(true)
+      if (accounts) {
+        setWallet({
+          provider,
+          library,
+          network,
+          address: accounts[0], // always get the first account (topmost),
+          chainId: network.chainId,
+        })
+      } else {
+        notify("Error", "Could not find any accounts!", "error")
+      }
     } catch (error) {
       notify("Error", "Could not connect wallet properly!", "error")
+      console.log(error)
     }
   }
 
+  /**
+   * Wallet disconnection. Sets the context wallet to be undefined.
+   */
   const disconnectWallet = () => {
-    if (!web3Modal) return
     try {
-      web3Modal.clearCachedProvider()
-      setAccount("")
-      setNetwork(undefined)
-      setActive(false)
+      web3Modal!.clearCachedProvider()
+      setWallet(undefined)
     } catch (error) {
       notify("Error", "Could not disconnect wallet properly!", "error")
     }
@@ -96,57 +82,53 @@ export const Web3ContextWrapper = ({ children }: { children: ReactChild }) => {
 
   // Check if the network is correct
   useEffect(() => {
-    if (provider?.on) {
+    if (wallet && wallet.provider.on) {
+      // Run when account changes
       const handleAccountsChanged = (accounts: string[]) => {
         if (accounts) {
+          setWallet((w) => ({ ...w!, address: accounts[0] }))
           notify(
             "Account Change",
-            `You have changed from ${truncateAccount(account!)} to ${truncateAccount(accounts[0])}.`,
+            `${truncateAccount(wallet.address)} changed to ${truncateAccount(accounts[0])}.`,
             "info"
           )
-          setAccount(accounts[0])
+        } else {
+          notify("Error", "Could not find any accounts!", "error")
         }
       }
 
+      // Network chain changed
       const handleChainChanged = (chainId: number) => {
-        setChainId(hexToDecimal(chainId))
+        setWallet((w) => ({ ...w!, chainId: hexToDecimal(chainId) }))
         notify("Network Change", "You have changed to chain " + hexToDecimal(chainId), "success")
       }
 
+      // Wallet is disconnected from the injected provider
       const handleDisconnect = () => {
-        disconnectWallet()
+        setWallet(undefined)
         notify("Wallet Disconnect", "You have disconnected your wallet.", "success")
       }
 
       // attach listeners
-      provider.on("accountsChanged", handleAccountsChanged)
-      provider.on("chainChanged", handleChainChanged)
-      provider.on("disconnect", handleDisconnect)
+      wallet.provider.on("accountsChanged", handleAccountsChanged)
+      wallet.provider.on("chainChanged", handleChainChanged)
+      wallet.provider.on("disconnect", handleDisconnect)
 
       // remove listeners on unmount
       return () => {
-        if (provider.removeListener) {
-          provider.removeListener("accountsChanged", handleAccountsChanged)
-          provider.removeListener("chainChanged", handleChainChanged)
-          provider.removeListener("disconnect", handleDisconnect)
+        if (wallet.provider.removeListener) {
+          wallet.provider.removeListener("accountsChanged", handleAccountsChanged)
+          wallet.provider.removeListener("chainChanged", handleChainChanged)
+          wallet.provider.removeListener("disconnect", handleDisconnect)
         }
       }
     }
-  }, [provider])
+  }, [wallet])
 
   return (
     <Web3Context.Provider
       value={{
-        active,
-        setActive,
-        network,
-        setNetwork,
-        chainId,
-        setChainId,
-        library,
-        setLibrary,
-        account,
-        setAccount,
+        wallet,
         connectWallet,
         disconnectWallet,
       }}

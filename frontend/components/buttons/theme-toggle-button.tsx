@@ -1,8 +1,9 @@
 import { Button, useMantineColorScheme } from "@mantine/core"
+import { FC } from "react"
 import { Sun, SunOff } from "tabler-icons-react"
 
 const ICON_SIZE = 24
-const ThemeToggleButton = () => {
+const ThemeToggleButton: FC = () => {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme()
 
   return (

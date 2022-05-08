@@ -1,10 +1,11 @@
 import { Box, Container, Text, Group } from "@mantine/core"
-import ThemeToggleButton from "../components/theme-toggle-button"
-import WalletConnectionButton from "./wallet-connection-button"
+import ThemeToggleButton from "./buttons/theme-toggle-button"
+import WalletConnectionButton from "./buttons/wallet-connection-button"
 import Link from "next/link"
-import WalletDisplayButton from "./wallet-display-button"
+import WalletDisplayButton from "./buttons/wallet-display-button"
+import { FC } from "react"
 
-const Header = () => {
+const Header: FC = () => {
   return (
     <Box component="header" py="md" sx={{ textAlign: "center", borderBottom: "1px solid lightgray" }}>
       <Container>

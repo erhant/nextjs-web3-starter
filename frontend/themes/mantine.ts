@@ -1,6 +1,7 @@
 import type { MantineThemeOverride } from "@mantine/core"
 
-// theme colors must be a 10-tuple string of colors
+// Mantine uses OpenColor color scheme by default. All colors must be a 10-tuple
+// see: https://yeun.github.io/open-color
 type ThemeColor = [string, string, string, string, string, string, string, string, string, string]
 
 // your primary color
@@ -29,14 +30,24 @@ const secondary: ThemeColor = [
   "#E8590C",
   "#D9480F",
 ]
+
+// your font families
+const fontFamilies = {
+  body: "-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Cantarell, sans-serif",
+  header: "-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Cantarell, sans-serif",
+  monospace: "Courier New, Courier, monospace",
+}
+
 const yourMantineTheme: MantineThemeOverride = {
   colors: {
     primary,
     secondary,
   },
-  fontFamily:
-    "-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif",
-  fontFamilyMonospace: "Courier New, Courier, monospace",
+  fontFamily: fontFamilies.body,
+  fontFamilyMonospace: fontFamilies.monospace,
+  headings: {
+    fontFamily: fontFamilies.header,
+  },
   primaryColor: "primary",
 }
 
