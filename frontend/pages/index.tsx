@@ -40,6 +40,9 @@ const Home: NextPage = () => {
           The template also has a premade layout component, and supports dark/light theme. To change theme, click on the
           sun icon on the top right.
         </Text>
+        <Title>
+          <Anchor href="contract/counter">Counter Contract</Anchor>
+        </Title>
       </>
     </Layout>
   )

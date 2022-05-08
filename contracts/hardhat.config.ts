@@ -24,6 +24,14 @@ const config: HardhatUserEtherscanConfig = {
   solidity: {
     compilers: [{ version: "0.8.5", settings: {} }],
   },
+  // redirect artifact output for the frontend
+  paths: {
+    artifacts: "../frontend/artifacts",
+  },
+  // redirect typechain output for the frontend
+  typechain: {
+    outDir: "../frontend/types/typechain",
+  },
   networks: {
     hardhat: {},
     localhost: {},
@@ -36,8 +44,7 @@ const config: HardhatUserEtherscanConfig = {
     },
   },
   etherscan: {
-    // Your API key for Etherscan
-    // Obtain one at https://etherscan.io/
+    // Your API key for Etherscan (from https://etherscan.io/)
     apiKey: ETHERSCAN_API_KEY,
   },
 }

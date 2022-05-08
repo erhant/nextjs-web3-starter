@@ -1,4 +1,4 @@
-# NextJS + TS + MantineUI + Web3 Starter
+# Frontend
 
 My Web3 frontend starter kit.
 
@@ -19,3 +19,4 @@ Just `npm install` and then follow NextJS instructions. Basically, `npm run dev`
 - [MantineUI + NextJS](https://mantine.dev/theming/next/)
 - [Mantine Notifications](https://mantine.dev/others/notifications/)
 - [Mantine Themes](https://mantine.dev/theming/mantine-provider/)
+- [MetaMask & Hardhat](https://www.web3.university/article/how-to-build-a-react-dapp-with-hardhat-and-metamask)

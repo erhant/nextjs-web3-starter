@@ -17,6 +17,12 @@ export const unknownNetwork: NetworkInfoType = {
 const _networks: {
   [chainId: string]: NetworkInfoType
 } = {
+  // Development (localhost)
+  "31337": {
+    chainName: "localhost",
+    nativeCurrency: { name: "ETH", decimals: 18, symbol: "ETH" },
+    iconURL: "/assets/code.svg",
+  },
   // Ethereum
   "1": {
     chainName: "Ethereum Mainnet",

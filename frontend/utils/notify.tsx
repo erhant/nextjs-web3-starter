@@ -5,6 +5,7 @@ import { X, InfoCircle, Check } from "tabler-icons-react"
 const ICONSIZE = 18
 
 const notify = (title: ReactNode, message: ReactNode, variant: "error" | "info" | "success") => {
+  if (variant == "error") console.log(message)
   showNotification({
     title: title,
     message: message,
@@ -18,6 +19,9 @@ const notify = (title: ReactNode, message: ReactNode, variant: "error" | "info" 
       info: "yellow",
       success: "green",
     }[variant],
+    sx: {
+      width: "400px",
+    },
   })
 }
 
