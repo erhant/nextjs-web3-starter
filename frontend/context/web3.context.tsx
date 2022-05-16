@@ -24,6 +24,7 @@ const Web3Context = createContext<Web3ContextType>({
   wallet: undefined,
 })
 
+const supportedChainIds = ["31337"]
 // wrapper for _app.tsx
 export const Web3ContextWrapper: FC<{ children: ReactChild }> = ({ children }) => {
   const [web3Modal, setWeb3Modal] = useState<Web3Modal>()
@@ -99,8 +100,13 @@ export const Web3ContextWrapper: FC<{ children: ReactChild }> = ({ children }) =
 
       // Network chain changed
       const handleChainChanged = (chainId: number) => {
-        setWallet((w) => ({ ...w!, chainId: hexToDecimal(chainId) }))
-        notify("Network Change", "You have changed to chain " + hexToDecimal(chainId), "success")
+        const newChainId = hexToDecimal(chainId)
+        setWallet((w) => ({ ...w!, chainId: newChainId }))
+        notify("Network Change", "You have changed to chain " + newChainId, "success")
+        if (!(newChainId in supportedChainIds)) {
+          notify("Unsupported Network", "Please use one of the supported networks.", "info")
+          disconnectWallet()
+        }
       }
 
       // Wallet is disconnected from the injected provider
