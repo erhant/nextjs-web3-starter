@@ -14,6 +14,7 @@ const Header: FC = () => {
             variant="gradient"
             gradient={{ from: "primary", to: "secondary", deg: 45 }}
             sx={{ fontSize: "1.5em", fontWeight: 800 }}
+            inline
           >
             <Link href="/">Web3 Starter</Link>
           </Text>

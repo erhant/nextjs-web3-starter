@@ -3,7 +3,7 @@ import { useWeb3Context } from "../../context/web3.context"
 import { Counter__factory, Counter as CounterType } from "../../types/typechain/"
 import { useEffect, useState } from "react"
 import Layout from "../../components/layout"
-import { Button, Text, Group, Title } from "@mantine/core"
+import { Button, Text, Group, Title, Box } from "@mantine/core"
 import getNetwork from "../../constants/networks"
 import notify from "../../utils/notify"
 import { ArrowUpCircle, ArrowDownCircle, Refresh } from "tabler-icons-react"
@@ -11,7 +11,7 @@ import { BigNumber, ethers } from "ethers"
 
 // Contract deployment address(es)
 const CONTRACT_ADDRESS: Readonly<{ [network: string]: string }> = {
-  localhost: "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
+  localhost: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
 }
 
 const CounterContract: NextPage = () => {
@@ -107,11 +107,20 @@ const CounterContract: NextPage = () => {
     <Layout>
       {contract ? (
         <>
-          <Group my="xl" position="center">
+          <Box my="xl" mx="auto" sx={{ textAlign: "center", width: "70%" }}>
+            <Title>A Simple Counter Contract</Title>
+            <Text>
+              The contract simply stores one 256-bit unsigned integer in it. You can increment and decrement this
+              counter, each of which is a transaction. If the count goes below 0, the transaction is rejected. The
+              counting event is subscribed automatically, but there is also a refresh button as an example.
+            </Text>
+          </Box>
+          <Box my="xl">
             <Text size="xl" sx={{ textAlign: "center" }}>
               <b>Count:</b> {count}
             </Text>
-          </Group>
+          </Box>
+
           <Group my="xl" position="center">
             <Button onClick={handleCountUp} color="secondary">
               <ArrowUpCircle />
