@@ -1,7 +1,7 @@
 import { config as dotEnvConfig } from "dotenv"
 dotEnvConfig()
 
-import { HardhatUserConfig } from "hardhat/types"
+import type { HardhatUserConfig } from "hardhat/types"
 
 import "@nomiclabs/hardhat-waffle"
 import "@typechain/hardhat"

@@ -1,6 +1,6 @@
-# NextJS + TypeScript + Web3 Starter
+# NextJS + Web3 Starter
 
-This repository has both the frontend, and the contracts.
+This repository has both the frontend, and the contracts; both sides are using TypeScript.
 
 - [Frontend](./frontend/) is using NextJS + TypeScript. It uses MantineUI, but also supports SASS for further styling.
 - [Contracts](./contracts/) is using HardHat + TypeScript. Furthermore, TypeChain is used to generate interfaces for the contracts.
@@ -21,4 +21,5 @@ If your get internal errors from MetaMask (such as _different block number_ or _
 
 ## Examples
 
-An example of Counter contract is provided. See the page [here](./frontend/pages/contract/counter.tsx) and contract [here](./contracts/contracts/Counter.sol).
+- An example of a Counter contract is provided. See the page [here](./frontend/counter.tsx) and contract [here](./contracts/contracts/Counter.sol). The deployment and test scripts are provided as well.
+- An example of an ERC-20 token contract is provided. See the page [here](./frontend/mytoken.tsx) and contract [here](./contracts/contracts/MyToken.sol). The deployment and test scripts are provided as well.

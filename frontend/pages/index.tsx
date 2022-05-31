@@ -12,7 +12,7 @@ const Home: NextPage = () => {
         <Hero
           left={
             <Box sx={{ width: "70%" }}>
-              <Title>NextJS + TypeScript + Web3 Starter</Title>
+              <Title>NextJS + Web3 Starter</Title>
               <Text>
                 <b>A template for your fresh decentralized application</b>. Develop and deploy your contracts using
                 Hardhat, and then interact with them in your web application using NextJS. Furthermore, enjoy the beauty
@@ -45,20 +45,39 @@ const Home: NextPage = () => {
         />
         <Hero
           left={
-            <Box sx={{ width: "70%" }}>
+            <Box sx={{ width: "60%" }}>
               <Title order={3}>Contract Example Provided</Title>
               <Text>
-                <b>A basic counter contract example is provided</b>. Deploy it to your localhost, and then interact with
-                it using your injected wallet.
+                <b>A basic counter contract example is provided</b>. Deploy it to your <code>localhost</code>, and then
+                interact with it using your injected wallet.
               </Text>
             </Box>
           }
           right={
-            <Button variant="light" size="xl">
-              <Link href="/contract/counter" passHref>
-                <Anchor>Counter Contract</Anchor>
-              </Link>
-            </Button>
+            <Box sx={{ width: "30%" }}>
+              <Button variant="light" size="xl">
+                <Link href="/counter" passHref>
+                  <Anchor>Counter Contract Example</Anchor>
+                </Link>
+              </Button>
+            </Box>
+          }
+        />
+        <Hero
+          left={
+            <Box sx={{ width: "30%" }}>
+              <Button variant="light" size="xl">
+                <Link href="/mytoken" passHref>
+                  <Anchor>ERC-20 Token Contract Example</Anchor>
+                </Link>
+              </Button>
+            </Box>
+          }
+          right={
+            <Box sx={{ width: "60%", textAlign: "right" }}>
+              <Title order={3}>ERC-20 Token Example Provided</Title>
+              <Text>Deploy a token and interact with it!</Text>
+            </Box>
           }
         />
       </>

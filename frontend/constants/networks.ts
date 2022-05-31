@@ -1,12 +1,5 @@
-export type NetworkInfoType = {
-  chainName: string
-  nativeCurrency: {
-    name: string
-    decimals: number
-    symbol: string
-  }
-  iconURL: string
-}
+import { NetworkInfoType } from "../types/network"
+
 const unknownIconURL = "/assets/questionmark.svg"
 export const unknownNetwork: NetworkInfoType = {
   chainName: "unknown",
@@ -15,93 +8,93 @@ export const unknownNetwork: NetworkInfoType = {
 }
 
 const _networks: {
-  [chainId: string]: NetworkInfoType
+  [chainId: number]: NetworkInfoType
 } = {
   // Development (localhost)
-  "31337": {
+  31337: {
     chainName: "localhost",
     nativeCurrency: { name: "ETH", decimals: 18, symbol: "ETH" },
     iconURL: "/assets/code.svg",
   },
   // Ethereum
-  "1": {
+  1: {
     chainName: "Ethereum Mainnet",
     nativeCurrency: { name: "ETH", decimals: 18, symbol: "ETH" },
     iconURL: "https://cryptologos.cc/logos/ethereum-eth-logo.svg",
   },
-  "3": {
+  3: {
     chainName: "Ropsten Testnet",
     nativeCurrency: { name: "ETH", decimals: 18, symbol: "ETH" },
     iconURL: "https://cryptologos.cc/logos/ethereum-eth-logo.svg",
   },
-  "4": {
+  4: {
     chainName: "Rinkeby Testnet",
     nativeCurrency: { name: "ETH", decimals: 18, symbol: "ETH" },
     iconURL: "https://cryptologos.cc/logos/ethereum-eth-logo.svg",
   },
-  "5": {
+  5: {
     chainName: "Goerli Testnet",
     nativeCurrency: { name: "ETH", decimals: 18, symbol: "ETH" },
     iconURL: "https://cryptologos.cc/logos/ethereum-eth-logo.svg",
   },
-  "42": {
+  42: {
     chainName: "Kovan Testnet",
     nativeCurrency: { name: "ETH", decimals: 18, symbol: "ETH" },
     iconURL: "https://cryptologos.cc/logos/ethereum-eth-logo.svg",
   },
   // Binance Smart Chain
-  "56": {
+  56: {
     chainName: "Binance Smart Chain Mainnet",
     nativeCurrency: { name: "BNB", decimals: 18, symbol: "BNB" },
     iconURL: "https://cryptologos.cc/logos/bnb-bnb-logo.svg",
   },
   // Avalanche
-  "43114": {
+  43114: {
     chainName: "Avalanche C-Chain",
     nativeCurrency: { name: "AVAX", decimals: 18, symbol: "AVAX" },
     iconURL: "https://cryptologos.cc/logos/avalanche-avax-logo.svg",
   },
-  "43113": {
+  43113: {
     chainName: "Avalanche FUJI C-Chain",
     nativeCurrency: { name: "AVAX", decimals: 18, symbol: "AVAX" },
     iconURL: "https://cryptologos.cc/logos/avalanche-avax-logo.svg",
   },
   // Fantom Opera
-  "250": {
+  250: {
     chainName: "Fantom Opera",
     nativeCurrency: { name: "FTM", decimals: 18, symbol: "FTM" },
     iconURL: "https://cryptologos.cc/logos/fantom-ftm-logo.svg",
   },
   // Polygon
-  "137": {
+  137: {
     chainName: "Polygon Mainnet",
     nativeCurrency: { name: "MATIC", decimals: 18, symbol: "MATIC" },
     iconURL: "https://cryptologos.cc/logos/polygon-matic-logo.svg",
   },
-  "80001": {
+  80001: {
     chainName: "Mumbai Testnet",
     nativeCurrency: { name: "MATIC", decimals: 18, symbol: "MATIC" },
     iconURL: "https://cryptologos.cc/logos/polygon-matic-logo.svg",
   },
   // Moonriver
-  "1285": {
+  1285: {
     chainName: "Moonriver",
     nativeCurrency: { name: "MOVR", decimals: 18, symbol: "MOVR" },
     iconURL: unknownIconURL,
   },
   // Moonbeam
-  "1284": {
+  1284: {
     chainName: "Moonbeam",
     nativeCurrency: { name: "GLMR", decimals: 18, symbol: "GLMR" },
     iconURL: unknownIconURL,
   },
   // Aurora
-  "1313161554": {
+  1313161554: {
     chainName: "Aurora",
     nativeCurrency: { name: "ETH", decimals: 18, symbol: "ETH" },
     iconURL: unknownIconURL,
   },
-  "1313161555": {
+  1313161555: {
     chainName: "Aurora Testnet",
     nativeCurrency: { name: "ETH", decimals: 18, symbol: "ETH" },
     iconURL: unknownIconURL,
@@ -110,12 +103,11 @@ const _networks: {
 
 /**
  * @param {number} chainId chainID of a given network
- * @returns {NetworkInfoType} details of the network, such as name an native currency
+ * @returns {NetworkInfoType} details of the network, such as name and native currency
  */
 function getNetwork(chainId: number): NetworkInfoType {
-  const _cid = chainId.toString()
-  if (_cid in _networks) {
-    return _networks[_cid]
+  if (chainId in _networks) {
+    return _networks[chainId]
   } else {
     return unknownNetwork
   }

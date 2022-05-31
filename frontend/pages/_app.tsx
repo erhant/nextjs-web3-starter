@@ -6,7 +6,7 @@ import "../styles/globals.scss"
 // mantine theming
 import yourMantineTheme from "../themes/mantine"
 import { MantineProvider, ColorScheme, ColorSchemeProvider } from "@mantine/core"
-import { Web3ContextWrapper } from "../context/web3.context"
+import { WalletContextWrapper } from "../context/wallet.context"
 import { NotificationsProvider } from "@mantine/notifications"
 
 export default function App(props: AppProps & { colorScheme: ColorScheme }) {
@@ -36,11 +36,11 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
             // you can change primaryColor w.r.t colorScheme here
           }}
         >
-          <Web3ContextWrapper>
+          <WalletContextWrapper>
             <NotificationsProvider>
               <Component {...pageProps} />
             </NotificationsProvider>
-          </Web3ContextWrapper>
+          </WalletContextWrapper>
         </MantineProvider>
       </ColorSchemeProvider>
     </>

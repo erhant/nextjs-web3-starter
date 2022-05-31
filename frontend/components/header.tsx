@@ -16,7 +16,7 @@ const Header: FC = () => {
             sx={{ fontSize: "1.5em", fontWeight: 800 }}
             inline
           >
-            <Link href="/">Web3 Starter</Link>
+            <Link href="/">NextJS + Web3</Link>
           </Text>
 
           {/* pushes the succeeding contents to the right */}

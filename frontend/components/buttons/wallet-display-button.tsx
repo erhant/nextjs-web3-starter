@@ -1,14 +1,15 @@
-import { Popover, Button, Card, Title, Divider, Group, Stack, Text, Image } from "@mantine/core"
+import { Popover, Button, Title, Group, Stack, Text, Image } from "@mantine/core"
 import { BigNumber } from "ethers"
 import { formatEther } from "ethers/lib/utils"
 import { useState, useEffect, FC } from "react"
 import { Wallet } from "tabler-icons-react"
-import getNetwork, { NetworkInfoType, unknownNetwork } from "../../constants/networks"
-import { useWeb3Context } from "../../context/web3.context"
+import getNetwork, { unknownNetwork } from "../../constants/networks"
+import { useWalletContext } from "../../context/wallet.context"
+import type { NetworkInfoType } from "../../types/network"
 import { truncateAccount } from "../../utils"
 
 const WalletDisplayButton: FC = () => {
-  const { wallet } = useWeb3Context()
+  const { wallet } = useWalletContext()
   const [opened, setOpened] = useState(false)
   const [balance, setBalance] = useState<BigNumber>(BigNumber.from(0))
   const [network, setNetwork] = useState<NetworkInfoType>(unknownNetwork)

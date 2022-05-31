@@ -1,9 +1,9 @@
 import { Button } from "@mantine/core"
 import { FC } from "react"
-import { useWeb3Context } from "../../context/web3.context"
+import { useWalletContext } from "../../context/wallet.context"
 
 const WalletConnectionButton: FC = () => {
-  const { disconnectWallet, connectWallet, wallet } = useWeb3Context()
+  const { disconnectWallet, connectWallet, wallet } = useWalletContext()
 
   return (
     <Button

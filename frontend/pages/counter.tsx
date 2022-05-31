@@ -1,69 +1,63 @@
 import { NextPage } from "next"
-import { useWeb3Context } from "../../context/web3.context"
-import { Counter__factory, Counter as CounterType } from "../../types/typechain/"
+import { useWalletContext } from "../context/wallet.context"
+import { Counter__factory, Counter as CounterContract } from "../types/typechain/"
 import { useEffect, useState } from "react"
-import Layout from "../../components/layout"
+import Layout from "../components/layout"
 import { Button, Text, Group, Title, Box } from "@mantine/core"
-import getNetwork from "../../constants/networks"
-import notify from "../../utils/notify"
+import notify from "../utils/notify"
 import { ArrowUpCircle, ArrowDownCircle, Refresh } from "tabler-icons-react"
 import { BigNumber, ethers } from "ethers"
+import getContractAddress from "../constants/contractAddresses"
+import contractConstants from "../constants/contractConstants"
 
-// Contract deployment address(es)
-const CONTRACT_ADDRESS: Readonly<{ [network: string]: string }> = {
-  localhost: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
-}
-
-const CounterContract: NextPage = () => {
-  // wallet and contract
-  const { wallet } = useWeb3Context()
-  const [contract, setContract] = useState<CounterType>()
+const CounterContractPage: NextPage = () => {
+  const { wallet } = useWalletContext()
+  const [contract, setContract] = useState<CounterContract>()
   // contract view states
   const [count, setCount] = useState(0)
 
-  // load contract on first load
   useEffect(() => {
     if (wallet) {
-      const network = getNetwork(wallet.chainId)
-      if (!(network.chainName in CONTRACT_ADDRESS)) {
-        notify("Contract Not Found", "This contract is not in the network: " + network.chainName, "error")
-      } else {
-        if (contract) setContract(undefined)
-        setContract(
-          Counter__factory.connect(CONTRACT_ADDRESS[network.chainName], wallet.library.getSigner(wallet.address))
-        )
-        notify("Contract Connected", "Connected to " + CONTRACT_ADDRESS[network.chainName], "success")
+      try {
+        const contractAddress = getContractAddress(contractConstants.Counter.contractName, wallet.chainId)
+        notify("Contract Connected", "Connected to " + contractAddress, "success")
+        setContract(Counter__factory.connect(contractAddress, wallet.library.getSigner(wallet.address)))
+      } catch (e: any) {
+        notify("Contract Not Found", e.message, "error")
       }
-    } else {
-      if (contract) setContract(undefined)
+    }
+
+    return () => {
+      setContract(undefined)
     }
   }, [wallet])
 
   // on contract load
   useEffect(() => {
-    if (contract) {
-      // initial gets
-      contract.getCount().then(
-        (count) => setCount(count.toNumber()),
-        (err) => notify("getCount", err.message, "error")
-      )
+    if (contract == undefined) return
 
-      // events
-      contract.on(ethers.utils.id("CountedTo(uint256)"), listenCountedTo)
-    }
+    // get current count
+    contract.getCount().then(
+      (count) => setCount(count.toNumber()),
+      (err) => notify("getCount", err.message, "error")
+    )
+
+    // subscribe to events
+    contract.on(ethers.utils.id("CountedTo(uint256)"), listenCountedTo)
 
     return () => {
-      if (contract) {
-        contract.off(ethers.utils.id("CountedTo(uint256)"), listenCountedTo)
-      }
+      // unsubscribe from events
+      contract.off(ethers.utils.id("CountedTo(uint256)"), listenCountedTo)
     }
   }, [contract])
 
+  // event listener for CountedTo
   const listenCountedTo = (newCount: BigNumber) => {
     notify("Event Listened", "CountedTo event returned " + newCount.toNumber(), "info")
     setCount(newCount.toNumber())
   }
-  // Refresh the count (alternative to events)
+
+  // refresh the count (alternative to events)
   const handleRefresh = async () => {
     if (contract) {
       try {
@@ -75,7 +69,7 @@ const CounterContract: NextPage = () => {
     }
   }
 
-  // Increment counter
+  // increment counter
   const handleCountUp = async () => {
     if (contract) {
       try {
@@ -84,12 +78,13 @@ const CounterContract: NextPage = () => {
         await tx.wait()
         notify("Transaction", "Counted up!", "success")
       } catch (err: any) {
-        notify("Error", err.data.message, "error")
+        console.log(err)
+        notify("Error", err.message || err.data.message, "error")
       }
     }
   }
 
-  // Decrement counter
+  // decrement counter
   const handleCountDown = async () => {
     if (contract) {
       try {
@@ -99,10 +94,11 @@ const CounterContract: NextPage = () => {
         notify("Transaction", "Counted down!", "success")
       } catch (err: any) {
         console.log(err)
-        notify("Error", err.data.message, "error")
+        notify("Error", err.message || err.data.message, "error")
       }
     }
   }
+
   return (
     <Layout>
       {contract ? (
@@ -140,4 +136,4 @@ const CounterContract: NextPage = () => {
   )
 }
 
-export default CounterContract
+export default CounterContractPage

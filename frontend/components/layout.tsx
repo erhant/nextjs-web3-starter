@@ -1,11 +1,11 @@
 import { Container } from "@mantine/core"
-import { FC, ReactChild } from "react"
+import type { FC, ReactNode } from "react"
 import Footer from "./footer"
 import Header from "./header"
 import styles from "../styles/layout.module.scss"
 
 const Layout: FC<{
-  children: ReactChild
+  children: ReactNode
 }> = ({ children }) => {
   return (
     <div className={styles["layout"]}>
