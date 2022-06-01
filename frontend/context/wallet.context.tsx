@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useEffect } from "react"
 import type { FC, ReactNode } from "react"
 import Web3Modal from "web3modal"
 import { ethers } from "ethers"
-import { hexToDecimal, truncateAccount } from "../utils"
+import { hexToDecimal, truncateAddress } from "../utils/utility"
 import { notify } from "../utils/notify"
 import type { WalletContextType, WalletType } from "../types/wallet"
 
@@ -69,7 +69,7 @@ export const WalletContextWrapper: FC<{ children: ReactNode }> = ({ children }) 
     const handleAccountsChanged = (accounts: string[]) => {
       if (!(accounts && accounts.length > 0)) return
       setWallet({ ...wallet, address: accounts[0] })
-      notify("Account Change", `${truncateAccount(wallet.address)} changed to ${truncateAccount(accounts[0])}.`, "info")
+      notify("Account Change", `${truncateAddress(wallet.address)} changed to ${truncateAddress(accounts[0])}.`, "info")
     }
 
     // network chain changed

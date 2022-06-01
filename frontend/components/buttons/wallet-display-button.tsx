@@ -6,7 +6,7 @@ import { Wallet } from "tabler-icons-react"
 import getNetwork, { unknownNetwork } from "../../constants/networks"
 import { useWalletContext } from "../../context/wallet.context"
 import type { NetworkInfoType } from "../../types/networks"
-import { truncateAccount } from "../../utils"
+import { truncateAddress } from "../../utils/utility"
 
 const WalletDisplayButton: FC = () => {
   const { wallet } = useWalletContext()
@@ -50,7 +50,7 @@ const WalletDisplayButton: FC = () => {
             <Title order={2} mt="md">
               Wallet ID
             </Title>
-            <Text>{truncateAccount(wallet.address)}</Text>
+            <Text>{truncateAddress(wallet.address)}</Text>
 
             {/* Balance */}
             <Title order={2} mt="md">

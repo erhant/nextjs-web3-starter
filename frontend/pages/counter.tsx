@@ -9,6 +9,7 @@ import { ArrowUpCircle, ArrowDownCircle, Refresh } from "tabler-icons-react"
 import { BigNumber, ethers } from "ethers"
 import getContractAddress from "../constants/contractAddresses"
 import contractConstants from "../constants/contractConstants"
+import { truncateAddress } from "../utils/utility"
 
 const CounterContractPage: NextPage = () => {
   const { wallet } = useWalletContext()
@@ -20,7 +21,7 @@ const CounterContractPage: NextPage = () => {
     if (wallet) {
       try {
         const contractAddress = getContractAddress(contractConstants.Counter.contractName, wallet.chainId)
-        notify("Contract Connected", "Connected to " + contractAddress, "success")
+        notify("Contract Connected", "Connected to " + truncateAddress(contractAddress), "success")
         setContract(Counter__factory.connect(contractAddress, wallet.library.getSigner(wallet.address)))
       } catch (e: any) {
         genericErrorNotify(e, "Contract Not Found", false)

@@ -55,22 +55,26 @@ const Home: NextPage = () => {
           }
           right={
             <Box sx={{ width: "30%" }}>
-              <Button variant="light" size="xl">
-                <Link href="/counter" passHref>
-                  <Anchor>Counter Contract Example</Anchor>
-                </Link>
-              </Button>
+              <Link href="/counter" passHref>
+                <Anchor>
+                  <Button variant="light" size="xl">
+                    Counter Contract Example
+                  </Button>
+                </Anchor>
+              </Link>
             </Box>
           }
         />
         <Hero
           left={
             <Box sx={{ width: "30%" }}>
-              <Button variant="light" size="xl">
-                <Link href="/mytoken" passHref>
-                  <Anchor>ERC-20 Token Contract Example</Anchor>
-                </Link>
-              </Button>
+              <Link href="/mytoken" passHref>
+                <Anchor>
+                  <Button variant="light" size="xl">
+                    ERC-20 Token Contract Example
+                  </Button>
+                </Anchor>
+              </Link>
             </Box>
           }
           right={

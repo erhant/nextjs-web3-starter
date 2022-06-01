@@ -22,8 +22,9 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   return (
     <>
       <Head>
-        <title>Web3 Starter</title>
+        <title>NextJS + Web3 Starter</title>
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
+        <meta name="description" content="A NextJS + Web3 starter template, supporting Hardhat with TypeScript." />
       </Head>
 
       <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>

@@ -4,7 +4,7 @@ import contractConstants from "./contractConstants"
 // write addresses here, or read them from environment
 const contractAddresses: Readonly<{ [contractName: string]: { [chainId: number]: string | undefined } }> = {
   [contractConstants.Counter.contractName]: {
-    31337: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+    31337: "0xe7f1725e7734ce288f8367e1bb143e90bb3f0512",
   },
   [contractConstants.MyToken.contractName]: {
     31337: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",

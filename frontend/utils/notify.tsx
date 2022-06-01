@@ -2,6 +2,7 @@ import { showNotification } from "@mantine/notifications"
 import { ContractTransaction } from "ethers"
 import { ReactNode } from "react"
 import { X, InfoCircle, Check } from "tabler-icons-react"
+import { truncateAddress } from "./utility"
 
 const ICONSIZE = 18
 
@@ -10,6 +11,7 @@ const ICONSIZE = 18
  * @param {ReactNode} title notification title, appears at the top
  * @param {ReactNode} message notification body
  * @param {'error' | 'info' | 'success'} variant adjust styling
+ * @param {boolean} loading set true for loading animation, defaults to false
  */
 export const notify = (
   title: ReactNode,
@@ -35,26 +37,35 @@ export const notify = (
       width: "min(90vw,400px)",
     },
     loading,
+    autoClose: 4000,
   })
 }
 
 /**
  * A generic error message notifier. Parses the error in the given object.
- * If error has data property, and data has message property, we use that.
- * else if error has message property, we use that.
- * else we say "Unknown Error",
+ * - if error has data property, and data has message property, we use that
+ * - else if error has message property, we use that
+ * - else just use error as is
  *
  * @param {any} error object caught during try-catch
- * @param {ReactNode} title optional title
+ * @param {string} title optional title
  */
-export const genericErrorNotify = (error: any, title: ReactNode = "Error", log: boolean = true) => {
+export const genericErrorNotify = (error: any, title: string = "Error", log: boolean = true) => {
   // extract message
-  const message = ""
+  let message = ""
+  if (Object.hasOwn(error, "data") && Object.hasOwn(error.data, "message")) {
+    message = error.data.message
+  } else if (Object.hasOwn(error, "message")) {
+    message = error.message
+  } else {
+    message = error.toString()
+  }
+
   // call notify
   notify(title, message, "error")
   // log to console optionally
   if (log) {
-    console.log(title)
+    console.log("!!!", title, "!!!")
     console.log(error)
   }
 }
@@ -64,5 +75,5 @@ export const genericErrorNotify = (error: any, title: ReactNode = "Error", log: 
  * @param {ContractTransaction} tx transaction object
  */
 export const genericTransactionNotify = (tx: ContractTransaction) => {
-  notify("Transaction Submitted", `Waiting ${tx.hash} to be mined`, "info", true)
+  notify("Transaction Submitted", `Waiting ${truncateAddress(tx.hash)} to be mined`, "info", true)
 }
