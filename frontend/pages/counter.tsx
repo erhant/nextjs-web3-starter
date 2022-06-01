@@ -4,7 +4,7 @@ import { Counter__factory, Counter as CounterContract } from "../types/typechain
 import { useEffect, useState } from "react"
 import Layout from "../components/layout"
 import { Button, Text, Group, Title, Box } from "@mantine/core"
-import notify from "../utils/notify"
+import { notify, genericErrorNotify, genericTransactionNotify } from "../utils/notify"
 import { ArrowUpCircle, ArrowDownCircle, Refresh } from "tabler-icons-react"
 import { BigNumber, ethers } from "ethers"
 import getContractAddress from "../constants/contractAddresses"
@@ -23,7 +23,7 @@ const CounterContractPage: NextPage = () => {
         notify("Contract Connected", "Connected to " + contractAddress, "success")
         setContract(Counter__factory.connect(contractAddress, wallet.library.getSigner(wallet.address)))
       } catch (e: any) {
-        notify("Contract Not Found", e.message, "error")
+        genericErrorNotify(e, "Contract Not Found", false)
       }
     }
 
@@ -39,20 +39,20 @@ const CounterContractPage: NextPage = () => {
     // get current count
     contract.getCount().then(
       (count) => setCount(count.toNumber()),
-      (err) => notify("getCount", err.message, "error")
+      (e) => genericErrorNotify(e, "getCount")
     )
 
     // subscribe to events
-    contract.on(ethers.utils.id("CountedTo(uint256)"), listenCountedTo)
+    contract.on(contract.filters.CountedTo(), listenCountedTo)
 
     return () => {
       // unsubscribe from events
-      contract.off(ethers.utils.id("CountedTo(uint256)"), listenCountedTo)
+      contract.off(contract.filters.CountedTo(), listenCountedTo)
     }
   }, [contract])
 
   // event listener for CountedTo
-  const listenCountedTo = (newCount: BigNumber) => {
+  const listenCountedTo: ethers.providers.Listener = (newCount: BigNumber) => {
     notify("Event Listened", "CountedTo event returned " + newCount.toNumber(), "info")
     setCount(newCount.toNumber())
   }
@@ -63,8 +63,8 @@ const CounterContractPage: NextPage = () => {
       try {
         const count = await contract.getCount()
         setCount(count.toNumber())
-      } catch (err: any) {
-        notify("Error", err.data.message, "error")
+      } catch (e: any) {
+        genericErrorNotify(e)
       }
     }
   }
@@ -74,12 +74,11 @@ const CounterContractPage: NextPage = () => {
     if (contract) {
       try {
         const tx = await contract.countUp()
-        notify("Transaction", tx.hash, "info")
+        genericTransactionNotify(tx)
         await tx.wait()
         notify("Transaction", "Counted up!", "success")
-      } catch (err: any) {
-        console.log(err)
-        notify("Error", err.message || err.data.message, "error")
+      } catch (e: any) {
+        genericErrorNotify(e)
       }
     }
   }
@@ -89,12 +88,11 @@ const CounterContractPage: NextPage = () => {
     if (contract) {
       try {
         const tx = await contract.countDown()
-        notify("Transaction", tx.hash, "info")
+        genericTransactionNotify(tx)
         await tx.wait()
         notify("Transaction", "Counted down!", "success")
-      } catch (err: any) {
-        console.log(err)
-        notify("Error", err.message || err.data.message, "error")
+      } catch (e: any) {
+        genericErrorNotify(e)
       }
     }
   }

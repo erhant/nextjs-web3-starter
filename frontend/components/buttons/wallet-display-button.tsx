@@ -5,7 +5,7 @@ import { useState, useEffect, FC } from "react"
 import { Wallet } from "tabler-icons-react"
 import getNetwork, { unknownNetwork } from "../../constants/networks"
 import { useWalletContext } from "../../context/wallet.context"
-import type { NetworkInfoType } from "../../types/network"
+import type { NetworkInfoType } from "../../types/networks"
 import { truncateAccount } from "../../utils"
 
 const WalletDisplayButton: FC = () => {

@@ -42,8 +42,7 @@ describe(contractConstants.MyToken.contractName, function () {
     })
 
     it("should assign the total supply of tokens to the owner", async function () {
-      const ownerBalance: BigNumber = await myTokenContract.balanceOf(owner.address)
-      expect(await myTokenContract.totalSupply()).to.equal(ownerBalance)
+      expect(await myTokenContract.totalSupply()).to.equal(await myTokenContract.balanceOf(owner.address))
     })
   })
 

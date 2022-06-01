@@ -3,7 +3,7 @@ import type { FC, ReactNode } from "react"
 import Web3Modal from "web3modal"
 import { ethers } from "ethers"
 import { hexToDecimal, truncateAccount } from "../utils"
-import notify from "../utils/notify"
+import { notify } from "../utils/notify"
 import type { WalletContextType, WalletType } from "../types/wallet"
 
 const WalletContext = createContext<WalletContextType>({

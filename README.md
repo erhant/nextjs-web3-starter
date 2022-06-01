@@ -21,5 +21,6 @@ If your get internal errors from MetaMask (such as _different block number_ or _
 
 ## Examples
 
-- An example of a Counter contract is provided. See the page [here](./frontend/counter.tsx) and contract [here](./contracts/contracts/Counter.sol). The deployment and test scripts are provided as well.
+- An example of a Counter [contract](./contracts/contracts/Counter.sol) is provided together with it's interactive [page](./frontend/counter.tsx).
+- An example of an ERC-20 token [contract](./contracts/contracts/MyToken.sol) is provided together with it's interactive [page](./frontend/mytoken.tsx).
 - An example of an ERC-20 token contract is provided. See the page [here](./frontend/mytoken.tsx) and contract [here](./contracts/contracts/MyToken.sol). The deployment and test scripts are provided as well.

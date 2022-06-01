@@ -1,4 +1,4 @@
-import { NetworkInfoType } from "../types/network"
+import { NetworkInfoType } from "../types/networks"
 
 const unknownIconURL = "/assets/questionmark.svg"
 export const unknownNetwork: NetworkInfoType = {
