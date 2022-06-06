@@ -4,7 +4,7 @@ import { Counter__factory, Counter as CounterContract } from "../types/typechain
 import { useEffect, useState } from "react"
 import Layout from "../components/layout"
 import { Button, Text, Group, Title, Box } from "@mantine/core"
-import { notify, genericErrorNotify, genericTransactionNotify } from "../utils/notify"
+import { notify, genericErrorNotify, genericTransactionNotify, updateTransactionNotify } from "../utils/notify"
 import { ArrowUpCircle, ArrowDownCircle, Refresh } from "tabler-icons-react"
 import { BigNumber, ethers } from "ethers"
 import getContractAddress from "../constants/contractAddresses"
@@ -75,9 +75,14 @@ const CounterContractPage: NextPage = () => {
     if (contract) {
       try {
         const tx = await contract.countUp()
-        genericTransactionNotify(tx)
-        await tx.wait()
-        notify("Transaction", "Counted up!", "success")
+        const nid = genericTransactionNotify(tx)
+        try {
+          await tx.wait()
+          updateTransactionNotify(nid, "Counted up!", "success")
+        } catch (e: any) {
+          updateTransactionNotify(nid, "Failed countUp.", "error")
+          genericErrorNotify(e)
+        }
       } catch (e: any) {
         genericErrorNotify(e)
       }
@@ -89,9 +94,14 @@ const CounterContractPage: NextPage = () => {
     if (contract) {
       try {
         const tx = await contract.countDown()
-        genericTransactionNotify(tx)
-        await tx.wait()
-        notify("Transaction", "Counted down!", "success")
+        const nid = genericTransactionNotify(tx)
+        try {
+          await tx.wait()
+          updateTransactionNotify(nid, "Counted down!", "success")
+        } catch (e: any) {
+          updateTransactionNotify(nid, "Failed countDown.", "error")
+          genericErrorNotify(e)
+        }
       } catch (e: any) {
         genericErrorNotify(e)
       }

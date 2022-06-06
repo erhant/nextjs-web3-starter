@@ -4,7 +4,7 @@ import { MyToken__factory, MyToken as MyTokenContract } from "../types/typechain
 import { useEffect, useState } from "react"
 import Layout from "../components/layout"
 import { Button, Text, Group, Title, Box, TextInput, NumberInput } from "@mantine/core"
-import { notify, genericErrorNotify, genericTransactionNotify } from "../utils/notify"
+import { notify, genericErrorNotify, genericTransactionNotify, updateTransactionNotify } from "../utils/notify"
 import { BigNumber, ethers } from "ethers"
 import getContractAddress from "../constants/contractAddresses"
 import contractConstants from "../constants/contractConstants"
@@ -118,9 +118,15 @@ const MyTokenContractPage: NextPage = () => {
     if (contract) {
       try {
         const tx = await contract.transfer(targetAddress, parseUnits(tokenAmount.toString(), decimals))
-        genericTransactionNotify(tx)
-        await tx.wait()
-        notify("Transaction", `Sent ${tokenAmount} tokens!`, "success")
+        const nid = genericTransactionNotify(tx)
+        try {
+          await tx.wait()
+          updateTransactionNotify(nid, `Sent ${tokenAmount} tokens!`, "success")
+        } catch (e: any) {
+          updateTransactionNotify(nid, `Failed transfer.`, "error")
+          genericErrorNotify(e)
+        }
+
         updateBalance()
       } catch (e: any) {
         genericErrorNotify(e)
@@ -136,9 +142,16 @@ const MyTokenContractPage: NextPage = () => {
           wallet!.address,
           parseUnits(tokenAmount.toString(), decimals)
         )
-        genericTransactionNotify(tx)
-        await tx.wait()
-        notify("Transaction", `Received ${tokenAmount} tokens!`, "success")
+        const nid = genericTransactionNotify(tx)
+
+        try {
+          await tx.wait()
+          updateTransactionNotify(nid, `Received ${tokenAmount} tokens!`, "success")
+        } catch (e: any) {
+          updateTransactionNotify(nid, `Failed transferFrom.`, "error")
+          genericErrorNotify(e)
+        }
+
         updateBalance()
       } catch (e: any) {
         genericErrorNotify(e)
@@ -149,9 +162,18 @@ const MyTokenContractPage: NextPage = () => {
     if (contract) {
       try {
         const tx = await contract.approve(targetAddress, parseUnits(tokenAmount.toString(), decimals))
-        genericTransactionNotify(tx)
-        await tx.wait()
-        notify("Transaction", `Approved ${truncateAddress(targetAddress)} for ${tokenAmount} tokens!`, "success")
+        const nid = genericTransactionNotify(tx)
+        try {
+          await tx.wait()
+          updateTransactionNotify(
+            nid,
+            `Approved ${truncateAddress(targetAddress)} for ${tokenAmount} tokens!`,
+            "success"
+          )
+        } catch (e: any) {
+          updateTransactionNotify(nid, `Failed approve.`, "error")
+          genericErrorNotify(e)
+        }
       } catch (e: any) {
         genericErrorNotify(e)
       }

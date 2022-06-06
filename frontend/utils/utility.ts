@@ -25,3 +25,8 @@ export function blockTimestampToDate(timestamp: number): Date {
 export function blockBigTimestampToDate(timestamp: BigNumber): Date {
   return new Date(timestamp.mul(1000).toNumber()) // converts to ms, and then to number
 }
+
+// returns a random unique string
+export function randomUniqueString(): string {
+  return `${Date.now()}${Math.floor(Math.random() * 1000)}`
+}
