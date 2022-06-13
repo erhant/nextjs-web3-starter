@@ -57,7 +57,7 @@ export const notify = (title: ReactNode, message: ReactNode, variant: VariantTyp
  * @param {string} title optional title
  * @returns {string} notification ID
  */
-export const genericErrorNotify = (error: any, title: string = "Error", log: boolean = true): string => {
+export const notifyError = (error: any, title: string = "Error", log: boolean = true): string => {
   // extract message
   let message = ""
   if (Object.hasOwn(error, "data") && Object.hasOwn(error.data, "message")) {
@@ -92,7 +92,7 @@ export const genericErrorNotify = (error: any, title: string = "Error", log: boo
  * @param {ContractTransaction} tx transaction object
  * @returns {string} notification ID
  */
-export const genericTransactionNotify = (tx: ContractTransaction): string => {
+export const notifyTransaction = (tx: ContractTransaction): string => {
   const id = randomUniqueString()
   showNotification({
     id,
@@ -108,7 +108,14 @@ export const genericTransactionNotify = (tx: ContractTransaction): string => {
   return id
 }
 
-export const updateTransactionNotify = (id: string, message?: ReactNode, variant?: VariantType) => {
+/**
+ * Update an existing transaction notification. Mostly done to show the result of a pending transaction.
+ * @param {string} id notification ID from the notifyTransaction
+ * @param message message to be updated
+ * @param variant
+ * @see notifyTransaction
+ */
+export const notifyTransactionUpdate = (id: string, message?: ReactNode, variant?: VariantType) => {
   updateNotification({
     id,
     title: "Transaction Complete",

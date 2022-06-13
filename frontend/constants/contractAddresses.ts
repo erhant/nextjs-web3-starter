@@ -1,13 +1,15 @@
 import { ethers } from "ethers"
 import contractConstants from "./contractConstants"
 
-// write addresses here, or read them from environment
+/**
+ * Contract addresses for each ChainID. These can also be read from .env
+ */
 const contractAddresses: Readonly<{ [contractName: string]: { [chainId: number]: string | undefined } }> = {
   [contractConstants.Counter.contractName]: {
-    31337: "0xe7f1725e7734ce288f8367e1bb143e90bb3f0512",
+    31337: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
   },
   [contractConstants.MyToken.contractName]: {
-    31337: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+    31337: "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
   },
 }
 

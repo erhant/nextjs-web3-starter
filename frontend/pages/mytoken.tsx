@@ -1,11 +1,11 @@
 import { NextPage } from "next"
 import { useWalletContext } from "../context/wallet.context"
 import { MyToken__factory, MyToken as MyTokenContract } from "../types/typechain/"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import Layout from "../components/layout"
 import { Button, Text, Group, Title, Box, TextInput, NumberInput } from "@mantine/core"
-import { notify, genericErrorNotify, genericTransactionNotify, updateTransactionNotify } from "../utils/notify"
-import { BigNumber, ethers } from "ethers"
+import { notify, notifyError, notifyTransaction, notifyTransactionUpdate } from "../utils/notify"
+import { BigNumber, ethers, EventFilter } from "ethers"
 import getContractAddress from "../constants/contractAddresses"
 import contractConstants from "../constants/contractConstants"
 import { formatUnits, parseUnits } from "ethers/lib/utils"
@@ -15,31 +15,27 @@ const MyTokenContractPage: NextPage = () => {
   const { wallet } = useWalletContext()
   const [contract, setContract] = useState<MyTokenContract>()
   // contract view states
-  const [totalSupply, setTotalSupply] = useState(0)
+  const [tokenInfo, setTokenInfo] = useState<{ totalSupply: number; name: string; symbol: string; decimals: number }>({
+    totalSupply: 0,
+    name: "",
+    symbol: "",
+    decimals: 18,
+  })
   const [balance, setBalance] = useState(0)
-  const [name, setName] = useState("")
-  const [symbol, setSymbol] = useState("")
-  const [decimals, setDecimals] = useState(18)
   // interactions
   const [tokenAmount, setTokenAmount] = useState(0)
   const [targetAddress, setTargetAddress] = useState("")
 
-  const updateBalance = () => {
-    contract?.balanceOf(wallet!.address).then(
-      (balance) => setBalance(Number(formatUnits(balance, decimals))),
-      (e) => genericErrorNotify(e, "balanceOf")
-    )
-  }
-
+  // wallet related effects
   useEffect(() => {
-    if (wallet) {
-      try {
-        const contractAddress = getContractAddress(contractConstants.MyToken.contractName, wallet.chainId)
-        notify("Contract Connected", "Connected to " + truncateAddress(contractAddress), "success")
-        setContract(MyToken__factory.connect(contractAddress, wallet.library.getSigner(wallet.address)))
-      } catch (e: any) {
-        genericErrorNotify(e, "Contract Not Found", false)
-      }
+    if (!wallet) return
+
+    try {
+      const contractAddress = getContractAddress(contractConstants.MyToken.contractName, wallet.chainId)
+      notify("Contract Connected", "Connected to " + truncateAddress(contractAddress), "success")
+      setContract(MyToken__factory.connect(contractAddress, wallet.library.getSigner(wallet.address)))
+    } catch (e: any) {
+      notifyError(e, "Contract Not Found", false)
     }
 
     return () => {
@@ -47,40 +43,61 @@ const MyTokenContractPage: NextPage = () => {
     }
   }, [wallet])
 
+  // contract related effects
   useEffect(() => {
-    if (contract == undefined) return
-
-    // get total supply
-    contract.totalSupply().then(
-      (totalSupply) => setTotalSupply(Number(formatUnits(totalSupply, decimals))),
-      (e) => genericErrorNotify(e, "totalSupply")
-    )
-
-    // get token name
-    contract.name().then(
-      (name) => setName(name),
-      (e) => genericErrorNotify(e, "name")
-    )
-
-    // get token symbol
-    contract.symbol().then(
-      (symbol) => setSymbol(symbol),
-      (e) => genericErrorNotify(e, "symbol")
-    )
-
-    // get token decimals
-    contract.decimals().then(
-      (decimals) => setDecimals(decimals),
-      (e) => genericErrorNotify(e, "decimals")
-    )
+    if (!contract) return
+    Promise.all([contract.totalSupply(), contract.name(), contract.symbol(), contract.decimals()])
+      .then((results) => {
+        let [totalSupply, name, symbol, decimals] = results
+        setTokenInfo({
+          totalSupply: Number(formatUnits(totalSupply, decimals)),
+          name,
+          symbol,
+          decimals,
+        })
+      })
+      .catch((e) => notifyError(e, "error retrieving tokenInfo"))
   }, [contract])
 
+  // account & token related effects
   useEffect(() => {
-    if (contract == undefined || wallet == undefined) return
+    if (!contract || !wallet) return
 
-    updateBalance()
+    // get initial balance of this address
+    contract.balanceOf(wallet.address).then(
+      (balance) => setBalance(Number(formatUnits(balance, tokenInfo.decimals))),
+      (e) => notifyError(e, "balanceOf")
+    )
 
     // @todo: events are getting too much, we just want to subscribe to them from the point of login
+    const listenTransfer: ethers.providers.Listener = (from: string, to: string, value: BigNumber) => {
+      if (from == wallet.address) {
+        notify(
+          "Transfer",
+          `Sent ${formatUnits(value, tokenInfo.decimals)} ${tokenInfo.symbol} to ${truncateAddress(to)}`,
+          "info"
+        )
+      } else if (to == wallet.address) {
+        notify(
+          "Transfer",
+          `Received ${formatUnits(value, tokenInfo.decimals)} ${tokenInfo.symbol} to ${truncateAddress(from)}`,
+          "info"
+        )
+      }
+
+      // update balance
+      contract.balanceOf(wallet.address).then(
+        (balance) => setBalance(Number(formatUnits(balance, tokenInfo.decimals))),
+        (e) => notifyError(e, "balanceOf")
+      )
+    }
+    const listenApproval: ethers.providers.Listener = (owner: string, spender: string, value: BigNumber) => {
+      notify(
+        "Approval",
+        `${truncateAddress(owner)} gave ${formatUnits(value, tokenInfo.decimals)} ${tokenInfo.symbol} allowance.`,
+        "info"
+      )
+    }
 
     contract.on(contract.filters.Transfer(wallet.address, null), listenTransfer)
     contract.on(contract.filters.Transfer(null, wallet.address), listenTransfer)
@@ -90,46 +107,24 @@ const MyTokenContractPage: NextPage = () => {
       contract.off(contract.filters.Transfer(wallet.address, null), listenTransfer)
       contract.off(contract.filters.Transfer(null, wallet.address), listenTransfer)
       contract.off(contract.filters.Approval(null, wallet.address), listenApproval)
+      contract.removeAllListeners()
     }
-  }, [contract, wallet])
-
-  const listenTransfer: ethers.providers.Listener = (from: string, to: string, value: BigNumber) => {
-    // if (from == wallet?.address) {
-    //   notify("Transfer", `You have sent ${formatUnits(value, decimals)} ${symbol} to ${truncateAddress(to)}`, "info")
-    // } else if (to == wallet?.address) {
-    //   notify(
-    //     "Transfer",
-    //     `You have received ${formatUnits(value, decimals)} ${symbol} to ${truncateAddress(from)}`,
-    //     "info"
-    //   )
-    // }
-
-    updateBalance()
-  }
-  const listenApproval: ethers.providers.Listener = (owner: string, spender: string, value: BigNumber) => {
-    // notify(
-    //   "Allowance",
-    //   `You have been given allowance of ${formatUnits(value, decimals)} tokens by ${truncateAddress(owner)}`,
-    //   "info"
-    // )
-  }
+  }, [contract, wallet, tokenInfo])
 
   const handleSend = async () => {
     if (contract) {
       try {
-        const tx = await contract.transfer(targetAddress, parseUnits(tokenAmount.toString(), decimals))
-        const nid = genericTransactionNotify(tx)
+        const tx = await contract.transfer(targetAddress, parseUnits(tokenAmount.toString(), tokenInfo.decimals))
+        const nid = notifyTransaction(tx)
         try {
           await tx.wait()
-          updateTransactionNotify(nid, `Sent ${tokenAmount} tokens!`, "success")
+          notifyTransactionUpdate(nid, `Sent ${tokenAmount} ${tokenInfo.symbol}!`, "success")
         } catch (e: any) {
-          updateTransactionNotify(nid, `Failed transfer.`, "error")
-          genericErrorNotify(e)
+          notifyTransactionUpdate(nid, `Failed transfer.`, "error")
+          notifyError(e)
         }
-
-        updateBalance()
       } catch (e: any) {
-        genericErrorNotify(e)
+        notifyError(e)
       }
     }
   }
@@ -140,42 +135,40 @@ const MyTokenContractPage: NextPage = () => {
         const tx = await contract.transferFrom(
           targetAddress,
           wallet!.address,
-          parseUnits(tokenAmount.toString(), decimals)
+          parseUnits(tokenAmount.toString(), tokenInfo.decimals)
         )
-        const nid = genericTransactionNotify(tx)
+        const nid = notifyTransaction(tx)
 
         try {
           await tx.wait()
-          updateTransactionNotify(nid, `Received ${tokenAmount} tokens!`, "success")
+          notifyTransactionUpdate(nid, `Received ${tokenAmount} tokens!`, "success")
         } catch (e: any) {
-          updateTransactionNotify(nid, `Failed transferFrom.`, "error")
-          genericErrorNotify(e)
+          notifyTransactionUpdate(nid, `Failed transferFrom.`, "error")
+          notifyError(e)
         }
-
-        updateBalance()
       } catch (e: any) {
-        genericErrorNotify(e)
+        notifyError(e)
       }
     }
   }
   const handleApprove = async () => {
     if (contract) {
       try {
-        const tx = await contract.approve(targetAddress, parseUnits(tokenAmount.toString(), decimals))
-        const nid = genericTransactionNotify(tx)
+        const tx = await contract.approve(targetAddress, parseUnits(tokenAmount.toString(), tokenInfo.decimals))
+        const nid = notifyTransaction(tx)
         try {
           await tx.wait()
-          updateTransactionNotify(
+          notifyTransactionUpdate(
             nid,
             `Approved ${truncateAddress(targetAddress)} for ${tokenAmount} tokens!`,
             "success"
           )
         } catch (e: any) {
-          updateTransactionNotify(nid, `Failed approve.`, "error")
-          genericErrorNotify(e)
+          notifyTransactionUpdate(nid, `Failed approve.`, "error")
+          notifyError(e)
         }
       } catch (e: any) {
-        genericErrorNotify(e)
+        notifyError(e)
       }
     }
   }
@@ -196,9 +189,9 @@ const MyTokenContractPage: NextPage = () => {
           {/* balance and token info */}
           <Box my="xl">
             <Text size="xl" sx={{ textAlign: "center" }}>
-              <b>{name} Balance:</b> {balance + " " + symbol}
+              <b>{tokenInfo.name} Balance:</b> {balance + " " + tokenInfo.symbol}
               <br />
-              <b>Total Supply:</b> {totalSupply + " " + symbol}
+              <b>Total Supply:</b> {tokenInfo.totalSupply + " " + tokenInfo.symbol}
             </Text>
           </Box>
 
@@ -218,7 +211,7 @@ const MyTokenContractPage: NextPage = () => {
               onChange={(val) => val && setTokenAmount(val)}
               label="Token Amount"
               min={0}
-              max={totalSupply}
+              max={tokenInfo.totalSupply}
             />
           </Group>
           <Group my="xl" position="center">
