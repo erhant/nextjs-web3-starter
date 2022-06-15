@@ -29,11 +29,11 @@ const WalletDisplayButton: FC = () => {
       opened={opened}
       onClose={() => setOpened(false)}
       target={
-        <Button disabled={wallet === undefined} variant="subtle" size="xs" onClick={() => setOpened(true)}>
+        <Button disabled={wallet === undefined} variant="subtle" size="xs" onClick={() => setOpened((o) => !o)}>
           <Wallet />
         </Button>
       }
-      width="500px"
+      width="min(90vw,500px)"
       position="bottom"
       withArrow
       withCloseButton
