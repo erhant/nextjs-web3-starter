@@ -3,7 +3,7 @@ import { ethers } from "hardhat"
 import { MyToken__factory, MyToken } from "../../frontend/types/typechain"
 import contractConstants from "../../frontend/constants/contractConstants"
 
-async function main() {
+export default async function main(): Promise<string> {
   console.log(`\n[${contractConstants.MyToken.contractName} Contract]`)
   const factory = (await ethers.getContractFactory(contractConstants.MyToken.contractName)) as MyToken__factory
 
@@ -19,11 +19,14 @@ async function main() {
   process.stdout.moveCursor(0, -1)
   process.stdout.clearLine(1)
   console.log(`\tContract is deployed at ${contract.address}`)
+  return contract.address
 }
 
-main()
-  .then(() => process.exit(0))
-  .catch((error) => {
-    console.error(error)
-    process.exit(1)
-  })
+if (require.main === module) {
+  main()
+    .then(() => process.exit(0))
+    .catch((error) => {
+      console.error(error)
+      process.exit(1)
+    })
+}

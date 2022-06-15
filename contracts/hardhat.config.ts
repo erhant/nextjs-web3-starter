@@ -8,18 +8,14 @@ import "@typechain/hardhat"
 import "@nomiclabs/hardhat-etherscan"
 import "solidity-coverage"
 
-interface Etherscan {
-  etherscan: { apiKey: string | undefined }
-}
-
-type HardhatUserEtherscanConfig = HardhatUserConfig & Etherscan
-
-const INFURA_API_KEY = process.env.INFURA_API_KEY || ""
+const RINKEBY_INFURA_PROJECT_ID = process.env.RINKEBY_INFURA_PROJECT_ID || ""
 const RINKEBY_PRIVATE_KEY =
   process.env.RINKEBY_PRIVATE_KEY! || "0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3" // well known private key
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY
 
-const config: HardhatUserEtherscanConfig = {
+const config: HardhatUserConfig & {
+  etherscan: { apiKey: string | undefined }
+} = {
   defaultNetwork: "hardhat",
   solidity: {
     compilers: [{ version: "0.8.5", settings: {} }],
@@ -32,7 +28,7 @@ const config: HardhatUserEtherscanConfig = {
     hardhat: {},
     localhost: {},
     rinkeby: {
-      url: `https://rinkeby.infura.io/v3/${INFURA_API_KEY}`,
+      url: `https://rinkeby.infura.io/v3/${RINKEBY_INFURA_PROJECT_ID}`,
       accounts: [RINKEBY_PRIVATE_KEY],
     },
     coverage: {
