@@ -25,3 +25,7 @@ If your get internal errors from MetaMask (such as _different block number_ or _
 - An example of an ERC-20 token [contract](./contracts/contracts/MyToken.sol) is provided together with it's interactive [page](./frontend/pages/mytoken.tsx).
 
 These are also deployed on Rinkeby network, [Counter](https://rinkeby.etherscan.io/address/0x7C9f4AA2fe39c7F5E9E18626D2CDF577af12a47D) and [MyToken](https://rinkeby.etherscan.io/address/0x1B7D3ea00f8e8142A5DFba8F95ceA8048eBC1bEC).
+
+## Deployment
+
+Project is deployed via Vercel CLI from the root directory with `vercel .`. In the project settings, the root directory is shown to be `frontend` and the preset settings are set for NextJS. I prefer this as otherwise Typechain generated files wont be visible there, and if you try to compile stuff with Hardhat you will get an error for trying to use Hardhat non-locally.

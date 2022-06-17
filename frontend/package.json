@@ -5,8 +5,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "prebuild": "cd ../contracts/ && npm install"
+    "lint": "next lint"
   },
   "dependencies": {
     "@mantine/core": "^4.1.4",
