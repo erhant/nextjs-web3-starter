@@ -5,7 +5,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prebuild": "cd ../contracts/ && npm install && npx hardhat compile --no-typechain && npx hardhat typechain"
   },
   "dependencies": {
     "@mantine/core": "^4.1.4",
