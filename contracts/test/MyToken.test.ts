@@ -6,29 +6,10 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers"
 import { BigNumber, ContractReceipt } from "ethers"
 import contractConstants from "../../frontend/constants/contractConstants"
 import { Result } from "ethers/lib/utils"
+import { expectEvent } from "../utilities/testing"
 
 chai.use(chaiAsPromised)
 const { expect } = chai
-
-const expectEvent = (receipt: ContractReceipt, name: string, checkArgs?: (r: Result) => boolean) => {
-  if (receipt.events) {
-    // there should be one event related to us here
-    expect(
-      receipt.events.some((e) => {
-        // should have the event name
-        expect(e.event).to.eq(name)
-        // if it has arguments, it must pass our check function
-        if (e.args) {
-          expect(checkArgs).to.be.not.undefined
-          expect(checkArgs!(e.args)).to.eq(true)
-        }
-        return true
-      })
-    ).to.be.true
-  } else {
-    expect.fail("No events found in this receipt!")
-  }
-}
 
 describe(contractConstants.MyToken.contractName, function () {
   let myTokenContract: MyToken
@@ -74,7 +55,13 @@ describe(contractConstants.MyToken.contractName, function () {
       const ownerBalance: BigNumber = await myTokenContract.balanceOf(owner.address)
 
       // transfer tokens from owner to addr1
-      await myTokenContract.transfer(addr1.address, t)
+      const tx = await myTokenContract.transfer(addr1.address, t)
+      expectEvent(await tx.wait(), "Transfer", (r) => {
+        expect(r.from).to.eq(owner.address)
+        expect(r.to).to.eq(addr1.address)
+        expect(r.value).to.eq(t)
+        return true
+      })
       expect(await myTokenContract.balanceOf(owner.address)).to.equal(ownerBalance.sub(t))
       expect(await myTokenContract.balanceOf(addr1.address)).to.equal(t)
 
@@ -114,7 +101,13 @@ describe(contractConstants.MyToken.contractName, function () {
       )
 
       // owner approves addr1 to take t tokens
-      await myTokenContract.approve(addr1.address, t)
+      const tx = await myTokenContract.approve(addr1.address, t)
+      expectEvent(await tx.wait(), "Approval", (r) => {
+        expect(r.owner).to.eq(owner.address)
+        expect(r.spender).to.eq(addr1.address)
+        expect(r.value).to.eq(t)
+        return true
+      })
 
       // addr1 transfers t tokens from owner to itself
       await myTokenContract.connect(addr1).transferFrom(owner.address, addr1.address, 10)
