@@ -3,9 +3,8 @@ import chai from "chai"
 import chaiAsPromised from "chai-as-promised"
 import { MyToken__factory, MyToken } from "../../frontend/types/typechain/index"
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers"
-import { BigNumber, ContractReceipt } from "ethers"
+import { BigNumber } from "ethers"
 import contractConstants from "../../frontend/constants/contractConstants"
-import { Result } from "ethers/lib/utils"
 import { expectEvent } from "../utilities/testing"
 
 chai.use(chaiAsPromised)

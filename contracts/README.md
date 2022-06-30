@@ -11,9 +11,7 @@ I have modified the starter kit of [rhlsthrm](https://github.com/rhlsthrm/typesc
    - Alternatively, run the [deployment shell script](./batches/deployAll.sh) with network name as the parameter (defaults to `localhost`) to run all scripts with name `*.deploy.ts`.
 5. It is now ready to be used on the frontend!
 
-I prefer to write individual deploy scripts as `<contract name>.deploy.ts`, but if some script depends on the deployment of another script (where the address is used) each deploy script is actually an exported function that returns the contract address as a Promise.
-
-To deploy on actual networks, you will need to provide keys and projetIDs for the deployment to work, for example:
+Deploy scripts are named as `<contract name>.deploy.ts`, and if some script depends on the deployment of another script (where the address is used) each deploy script exports a function that returns the contract address as a Promise. To deploy on actual networks, you will need to provide keys and projectIDs in an `.env` file, for example:
 
 ```env
 # Rinkeby
