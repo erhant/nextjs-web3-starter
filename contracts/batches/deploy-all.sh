@@ -1,6 +1,5 @@
 #!/bin/bash
-
-# Script to deploy all contracts to the given network
+## Script to deploy all contracts to the given network
 
 # Go to parent folder
 cd "${0%/*}"/..

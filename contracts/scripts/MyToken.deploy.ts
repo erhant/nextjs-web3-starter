@@ -1,7 +1,6 @@
 import { ethers } from "hardhat"
-//@ts-ignore // the objects here are created by typechain
-import { MyToken__factory, MyToken } from "../../frontend/types/typechain"
-import contractConstants from "../../frontend/constants/contractConstants"
+import { MyToken__factory, MyToken } from "../types/typechain"
+import contractConstants from "../constants/contract"
 
 export default async function main(): Promise<string> {
   console.log(`\n[${contractConstants.MyToken.contractName} Contract]`)
@@ -25,7 +24,7 @@ export default async function main(): Promise<string> {
 if (require.main === module) {
   main()
     .then(() => process.exit(0))
-    .catch((error) => {
+    .catch(error => {
       console.error(error)
       process.exit(1)
     })

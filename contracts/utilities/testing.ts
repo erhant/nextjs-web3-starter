@@ -17,10 +17,11 @@ export const expectEvent = (receipt: ContractReceipt, name: string, checkArgs?: 
   if (receipt.events) {
     // there should be one event related to us here
     expect(
-      receipt.events.some((e) => {
+      receipt.events.some(e => {
         // should have the event name
         expect(e.event).to.eq(name)
         // if it has arguments, it must pass our check function
+        // even if we dont care about what they are
         if (e.args) {
           expect(checkArgs).to.be.not.undefined
           expect(checkArgs!(e.args)).to.eq(true)

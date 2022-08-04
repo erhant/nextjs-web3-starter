@@ -1,5 +1,5 @@
 {
-  "name": "nextjs-web3-starter",
+  "name": "nextjs-web3-starter-frontend",
   "version": "0.1.0",
   "scripts": {
     "dev": "next dev",
@@ -7,6 +7,16 @@
     "start": "next start",
     "lint": "next lint"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/erhant/nextjs-web3-starter.git"
+  },
+  "author": "erhant",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/erhant/nextjs-web3-starter/issues"
+  },
+  "homepage": "https://github.com/erhant/nextjs-web3-starter#readme",
   "dependencies": {
     "@mantine/core": "^4.2.0",
     "@mantine/hooks": "^4.2.0",

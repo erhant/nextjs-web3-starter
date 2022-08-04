@@ -1,10 +1,9 @@
 import { ethers } from "hardhat"
 import chai, { should } from "chai"
 import chaiAsPromised from "chai-as-promised"
-//@ts-ignore // the objects here are created by typechain
-import { Counter__factory, Counter } from "../../frontend/types/typechain"
+import { Counter__factory, Counter } from "../types/typechain"
 import { BigNumber, Signer } from "ethers"
-import contractConstants from "../../frontend/constants/contractConstants"
+import contractConstants from "../constants/contract"
 import { expectEvent } from "../utilities/testing"
 
 chai.use(chaiAsPromised)
@@ -34,7 +33,7 @@ describe(contractConstants.Counter.contractName, () => {
   describe("count up", async () => {
     it("should count up", async () => {
       const tx = await counterContract.countUp()
-      expectEvent(await tx.wait(), "CountedTo", (r) => BigNumber.from(1).eq(r.number))
+      expectEvent(await tx.wait(), "CountedTo", r => BigNumber.from(1).eq(r.number))
 
       let count = await counterContract.getCount()
       expect(count).to.eq(1)
@@ -46,7 +45,7 @@ describe(contractConstants.Counter.contractName, () => {
       await counterContract.countUp()
 
       const tx = await counterContract.countDown()
-      expectEvent(await tx.wait(), "CountedTo", (r) => BigNumber.from(0).eq(r.number))
+      expectEvent(await tx.wait(), "CountedTo", r => BigNumber.from(0).eq(r.number))
 
       const count = await counterContract.getCount()
       expect(count).to.eq(0)

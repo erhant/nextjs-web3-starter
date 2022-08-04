@@ -1,16 +1,16 @@
 import { ethers } from "hardhat"
 import chai from "chai"
 import chaiAsPromised from "chai-as-promised"
-import { MyToken__factory, MyToken } from "../../frontend/types/typechain/index"
+import { MyToken__factory, MyToken } from "../types/typechain/index"
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers"
 import { BigNumber } from "ethers"
-import contractConstants from "../../frontend/constants/contractConstants"
+import contractConstants from "../constants/contract"
 import { expectEvent } from "../utilities/testing"
 
 chai.use(chaiAsPromised)
 const { expect } = chai
 
-describe(contractConstants.MyToken.contractName, function () {
+describe(contractConstants.MyToken.contractName, function() {
   let myTokenContract: MyToken
 
   // signers, first one is the owner (the one who deploys)
@@ -20,7 +20,7 @@ describe(contractConstants.MyToken.contractName, function () {
   let addrs: SignerWithAddress[]
 
   // deploy the contract before each test
-  beforeEach(async function () {
+  beforeEach(async function() {
     const factory = ((await ethers.getContractFactory(
       contractConstants.MyToken.contractName
     )) as unknown) as MyToken__factory
@@ -34,28 +34,28 @@ describe(contractConstants.MyToken.contractName, function () {
   })
 
   // test about the state on deployment
-  describe("deployment", function () {
-    it("should have the correct name, symbol and total supply", async function () {
+  describe("deployment", function() {
+    it("should have the correct name, symbol and total supply", async function() {
       expect(await myTokenContract.name()).to.equal(contractConstants.MyToken.tokenName)
       expect(await myTokenContract.symbol()).to.equal(contractConstants.MyToken.tokenSymbol)
       expect(await myTokenContract.totalSupply()).to.equal(contractConstants.MyToken.totalSupply)
       expect(myTokenContract.address).to.properAddress
     })
 
-    it("should assign the total supply of tokens to the owner", async function () {
+    it("should assign the total supply of tokens to the owner", async function() {
       expect(await myTokenContract.totalSupply()).to.equal(await myTokenContract.balanceOf(owner.address))
     })
   })
 
   // test transferring tokens
-  describe("transactions", function () {
-    it("should transfer tokens between accounts", async function () {
+  describe("transactions", function() {
+    it("should transfer tokens between accounts", async function() {
       const t: number = 50 // how many tokens to transfer
       const ownerBalance: BigNumber = await myTokenContract.balanceOf(owner.address)
 
       // transfer tokens from owner to addr1
       const tx = await myTokenContract.transfer(addr1.address, t)
-      expectEvent(await tx.wait(), "Transfer", (r) => {
+      expectEvent(await tx.wait(), "Transfer", r => {
         expect(r.from).to.eq(owner.address)
         expect(r.to).to.eq(addr1.address)
         expect(r.value).to.eq(t)
@@ -76,7 +76,7 @@ describe(contractConstants.MyToken.contractName, function () {
       expect(await myTokenContract.balanceOf(owner.address)).to.equal(ownerBalance)
     })
 
-    it("should fail if the sender doesn't have enough tokens", async function () {
+    it("should fail if the sender doesn't have enough tokens", async function() {
       const initialOwnerBalance: BigNumber = await myTokenContract.balanceOf(owner.address)
 
       // try to send 1 token from addr1 (who has 0 tokens) to owner.
@@ -89,7 +89,7 @@ describe(contractConstants.MyToken.contractName, function () {
       expect(await myTokenContract.balanceOf(owner.address)).to.equal(initialOwnerBalance)
     })
 
-    it("should only transferFrom if the sender has allowance for receiver", async function () {
+    it("should only transferFrom if the sender has allowance for receiver", async function() {
       const t: number = 10 // how many tokens to transfer
       const initialOwnerBalance: BigNumber = await myTokenContract.balanceOf(owner.address)
 
@@ -101,7 +101,7 @@ describe(contractConstants.MyToken.contractName, function () {
 
       // owner approves addr1 to take t tokens
       const tx = await myTokenContract.approve(addr1.address, t)
-      expectEvent(await tx.wait(), "Approval", (r) => {
+      expectEvent(await tx.wait(), "Approval", r => {
         expect(r.owner).to.eq(owner.address)
         expect(r.spender).to.eq(addr1.address)
         expect(r.value).to.eq(t)
