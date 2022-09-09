@@ -1,4 +1,4 @@
-import {Popover, Button, Title, Group, Stack, Text, Image} from '@mantine/core';
+import {Popover, ActionIcon, Title, Group, Stack, Text, Image} from '@mantine/core';
 import {BigNumber} from 'ethers';
 import {formatEther} from 'ethers/lib/utils';
 import {useState, useEffect, FC} from 'react';
@@ -29,9 +29,9 @@ const WalletDisplayButton: FC = () => {
       opened={opened}
       onClose={() => setOpened(false)}
       target={
-        <Button disabled={wallet === undefined} variant="subtle" size="xs" onClick={() => setOpened(o => !o)}>
-          <WalletIcon />
-        </Button>
+        <ActionIcon disabled={wallet === undefined} onClick={() => setOpened(o => !o)}>
+          <WalletIcon fontSize="1.2em" />
+        </ActionIcon>
       }
       width="min(90vw,500px)"
       position="bottom"

@@ -3,7 +3,7 @@ import {useWalletContext} from '../context/wallet.context';
 import {Counter__factory, Counter as CounterContract} from '../types/typechain/';
 import {useEffect, useState} from 'react';
 import Layout from '../components/layout';
-import {Button, Text, Group, Title, Box} from '@mantine/core';
+import {Button, Text, Group, Title, Box, ActionIcon} from '@mantine/core';
 import {notify, notifyError, notifyTransaction, notifyTransactionUpdate} from '../utils/notify';
 import {ArrowUpCircleIcon, ArrowDownCircleIcon, ArrowPathIcon} from '@heroicons/react/24/solid';
 import getContractAddress from '../constants/addresses';
@@ -19,6 +19,7 @@ const CounterContractPage: NextPage = () => {
     if (wallet) {
       try {
         const contractAddress = getContractAddress('Counter', wallet.chainId);
+        // TODO: add deployment check here
         notify('Contract Connected', 'Connected to ' + truncateAddress(contractAddress), 'success');
         setContract(Counter__factory.connect(contractAddress, wallet.library.getSigner(wallet.address)));
       } catch (e: any) {
@@ -122,15 +123,15 @@ const CounterContractPage: NextPage = () => {
           </Box>
 
           <Group my="xl" position="center">
-            <Button onClick={handleCountUp} color="secondary">
-              <ArrowUpCircle />
-            </Button>
-            <Button onClick={handleCountDown} color="secondary">
-              <ArrowDownCircle />
-            </Button>
-            <Button onClick={handleRefresh}>
-              <Refresh />
-            </Button>
+            <ActionIcon onClick={handleCountUp} color="secondary">
+              <ArrowUpCircleIcon />
+            </ActionIcon>
+            <ActionIcon onClick={handleCountDown} color="secondary">
+              <ArrowDownCircleIcon />
+            </ActionIcon>
+            <ActionIcon onClick={handleRefresh}>
+              <ArrowPathIcon />
+            </ActionIcon>
           </Group>
         </>
       ) : (

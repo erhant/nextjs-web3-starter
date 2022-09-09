@@ -7,9 +7,9 @@ export const unknownNetwork: NetworkInfoType = {
   iconURL: unknownIconURL,
 };
 
-const _networks: {
+const _networks: Readonly<{
   [chainId: number]: NetworkInfoType;
-} = {
+}> = {
   // Development (localhost)
   31337: {
     chainName: 'localhost',

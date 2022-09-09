@@ -1,19 +1,18 @@
 import {NextPage} from 'next';
 import {useWalletContext} from '../context/wallet.context';
-import {MyToken__factory, MyToken as MyTokenContract} from '../types/typechain/';
+import {MyERC20__factory, MyERC20 as MyERC20Contract} from '../types/typechain/';
 import {useEffect, useState} from 'react';
 import Layout from '../components/layout';
 import {Button, Text, Group, Title, Box, TextInput, NumberInput} from '@mantine/core';
 import {notify, notifyError, notifyTransaction, notifyTransactionUpdate} from '../utils/notify';
 import {BigNumber, ethers} from 'ethers';
 import getContractAddress from '../constants/addresses';
-import contractConstants from '../constants/contract';
 import {formatUnits, parseUnits} from 'ethers/lib/utils';
 import {truncateAddress} from '../utils/utility';
 
-const MyTokenContractPage: NextPage = () => {
+const MyERC20ContractPage: NextPage = () => {
   const {wallet} = useWalletContext();
-  const [contract, setContract] = useState<MyTokenContract>();
+  const [contract, setContract] = useState<MyERC20Contract>();
   // contract view states
   const [tokenInfo, setTokenInfo] = useState<{totalSupply: number; name: string; symbol: string; decimals: number}>({
     totalSupply: 0,
@@ -31,9 +30,10 @@ const MyTokenContractPage: NextPage = () => {
     if (!wallet) return;
 
     try {
-      const contractAddress = getContractAddress(contractConstants.MyToken.contractName, wallet.chainId);
+      const contractAddress = getContractAddress('MyERC20', wallet.chainId);
+      // TODO: add deployment check here
       notify('Contract Connected', 'Connected to ' + truncateAddress(contractAddress), 'success');
-      setContract(MyToken__factory.connect(contractAddress, wallet.library.getSigner(wallet.address)));
+      setContract(MyERC20__factory.connect(contractAddress, wallet.library.getSigner(wallet.address)));
     } catch (e: any) {
       notifyError(e, 'Contract Not Found', false);
     }
@@ -107,7 +107,6 @@ const MyTokenContractPage: NextPage = () => {
       contract.off(contract.filters.Transfer(wallet.address, null), listenTransfer);
       contract.off(contract.filters.Transfer(null, wallet.address), listenTransfer);
       contract.off(contract.filters.Approval(null, wallet.address), listenApproval);
-      contract.removeAllListeners();
     };
   }, [contract, wallet, tokenInfo]);
 
@@ -233,4 +232,4 @@ const MyTokenContractPage: NextPage = () => {
   );
 };
 
-export default MyTokenContractPage;
+export default MyERC20ContractPage;

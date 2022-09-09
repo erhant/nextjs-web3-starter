@@ -6,12 +6,10 @@ import {ethers} from 'ethers';
  */
 const contractAddresses: Readonly<{[contractName: string]: {[chainId: number]: string | undefined}}> = {
   Counter: {
-    31337: '0xa513E6E4b8f2a923D98304ec87F64353C4D5C853',
-    4: '0x7C9f4AA2fe39c7F5E9E18626D2CDF577af12a47D',
+    31337: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
   },
   MyERC20: {
-    31337: '0x0165878A594ca255338adfa4d48449f69242Eb8F',
-    4: '0x1B7D3ea00f8e8142A5DFba8F95ceA8048eBC1bEC',
+    31337: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
   },
 };
 

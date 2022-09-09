@@ -57,20 +57,19 @@ export const notify = (title: ReactNode, message: ReactNode, variant: VariantTyp
  * @returns {string} notification ID
  */
 export const notifyError = (error: any, title: string = 'Error', log: boolean = true): string => {
-  // extract message
-  let message = '';
-  if (Object.hasOwn(error, 'data') && Object.hasOwn(error.data, 'message')) {
-    message = error.data.message;
-  } else if (Object.hasOwn(error, 'message')) {
-    message = error.message;
+  let message = 'See console.';
+  if (error.error) {
+    // contract revert error
+    message = error.error.message;
   } else {
-    message = error.toString();
+    // reject error
+    message = error.message;
   }
 
   // log to console optionally
   if (log) {
-    console.log('!!!', title, '!!!');
-    console.log(error);
+    console.log('\tERROR:', title);
+    console.log(error.error);
   }
 
   const id = randomUniqueString();
@@ -80,7 +79,7 @@ export const notifyError = (error: any, title: string = 'Error', log: boolean = 
     message,
     icon: variantToIcon('error'),
     color: variantToColor('error'),
-    autoClose: false,
+    autoClose: AUTO_CLOSE_DEFAULT * 1.5,
     sx: NOTIF_SX,
   });
   return id;
