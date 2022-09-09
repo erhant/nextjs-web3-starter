@@ -1,23 +1,23 @@
-import { AppProps } from "next/app"
-import { useState } from "react"
-import Head from "next/head"
+import {AppProps} from 'next/app';
+import {useState} from 'react';
+import Head from 'next/head';
 // global styles
-import "../styles/globals.scss"
+import '../styles/globals.scss';
 // mantine theming
-import yourMantineTheme from "../themes/mantine"
-import { MantineProvider, ColorScheme, ColorSchemeProvider } from "@mantine/core"
-import { WalletContextWrapper } from "../context/wallet.context"
-import { NotificationsProvider } from "@mantine/notifications"
+import yourMantineTheme from '../themes/mantine';
+import {MantineProvider, ColorScheme, ColorSchemeProvider} from '@mantine/core';
+import {WalletContextWrapper} from '../context/wallet.context';
+import {NotificationsProvider} from '@mantine/notifications';
 
-export default function App(props: AppProps & { colorScheme: ColorScheme }) {
-  const { Component, pageProps } = props
-  const [colorScheme, setColorScheme] = useState<ColorScheme>(props.colorScheme)
+export default function App(props: AppProps & {colorScheme: ColorScheme}) {
+  const {Component, pageProps} = props;
+  const [colorScheme, setColorScheme] = useState<ColorScheme>(props.colorScheme);
 
   const toggleColorScheme = (value?: ColorScheme) => {
-    const nextColorScheme = value || (colorScheme === "dark" ? "light" : "dark")
-    setColorScheme(nextColorScheme)
+    const nextColorScheme = value || (colorScheme === 'dark' ? 'light' : 'dark');
+    setColorScheme(nextColorScheme);
     // NOTE: if you want to, set cookie here
-  }
+  };
 
   return (
     <>
@@ -45,5 +45,5 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
         </MantineProvider>
       </ColorSchemeProvider>
     </>
-  )
+  );
 }

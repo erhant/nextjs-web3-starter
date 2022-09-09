@@ -1,11 +1,17 @@
 {
-  "name": "nextjs-web3-starter-frontend",
+  "name": "nextjs-web3-starter",
   "version": "0.1.0",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "gts lint",
+    "clean": "gts clean",
+    "compile": "tsc",
+    "fix": "gts fix",
+    "prepare": "yarn run compile",
+    "pretest": "yarn run compile",
+    "posttest": "yarn run lint"
   },
   "repository": {
     "type": "git",
@@ -18,6 +24,7 @@
   },
   "homepage": "https://github.com/erhant/nextjs-web3-starter#readme",
   "dependencies": {
+    "@heroicons/react": "^2.0.10",
     "@mantine/core": "^4.2.0",
     "@mantine/hooks": "^4.2.0",
     "@mantine/next": "^4.2.0",
@@ -26,7 +33,6 @@
     "next": "12.1.5",
     "react": "18.0.0",
     "react-dom": "18.0.0",
-    "tabler-icons-react": "^1.46.0",
     "web3modal": "^1.9.7"
   },
   "devDependencies": {
@@ -38,8 +44,9 @@
     "eslint": "8.13.0",
     "eslint-config-next": "12.1.5",
     "eslint-config-prettier": "^8.5.0",
+    "gts": "^3.1.1",
     "prettier": "^2.6.2",
     "sass": "^1.50.1",
-    "typescript": "4.6.3"
+    "typescript": "~4.7.0"
   }
 }
