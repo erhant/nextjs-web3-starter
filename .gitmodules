@@ -1,0 +1,3 @@
+[submodule "contract-playground"]
+	path = contract-playground
+	url = git@github.com:erhant/contract-playground.git
