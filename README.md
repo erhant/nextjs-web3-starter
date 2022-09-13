@@ -14,13 +14,15 @@ or you can clone this repo with --recurse-submodules option.
 
 Here is the workflow you should follow for **development**:
 
-1. Write your contract under [contracts](./contracts/), build it with `npm run build`. Test it with `npx hardhat test` too. The build will copy contract types (form typechain) and and duplicate contract constants to [frontend](./frontend/).
-2. On a separate terminal, start a node with `npx hardhat node`.
-3. Deploy the compiled contract to your localhost with `npx hardhat run ./scripts/<your script> --network localhost`.
-4. Write the contract address in your frontend code, and run the app with `yarn run dev`.
-5. You are ready to interact with the contract!
+1. Write your contract under the contract playground folder, which is a submodule specifically for writing contracts.
+2. Compile with `yarn compile` or test with `yarn test`. To use the contract typings from here, run `migrate-types.sh` at the root directory.
+3. This will allow you to access contract types and factories from frontend, without having the need to manually write any ABI-related code.
+4. On a separate terminal, start a node with `npx hardhat node`.
+5. Deploy the compiled contract to your localhost with `npx hardhat run ./scripts/<your script> --network localhost`.
+6. Write the contract address in your frontend code, and run the app with `yarn run dev`.
+7. You are ready to interact with the contract!
 
-To connect to the localhost from MetaMask, change the chainId of localhost to be `31337`. You can then import one of the public accounts (with known private keys) to your MetaMask, and interact with the contract using the ETH there. If you get internal errors from MetaMask (such as _different block number_ or _nonce too high_) reset your account from `Settings > Advanced > Reset Account`. This will make your injected wallet use local hardhat information instead of the cached one from your previous session.
+To connect to the localhost from MetaMask, change the chainId of localhost to be `31337`. You can then import one of the public accounts (with known private keys) to your MetaMask, and interact with the contract using the ETH there. If you get internal errors from MetaMask such as _different block number_ or _nonce too high_, reset your account from `Settings > Advanced > Reset Account`. This will make your injected wallet use local hardhat information instead of the cached one from your previous session.
 
 ## Deployment
 
