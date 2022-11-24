@@ -1,27 +1,28 @@
 import {NextPage} from 'next';
-import {useWalletContext} from '../context/wallet.context';
+// import {useWalletContext} from '../context/wallet.context';
 import {Counter__factory, Counter as CounterContract} from '../types/typechain/';
 import {useEffect, useState} from 'react';
 import Layout from '../components/layout';
-import {Button, Text, Group, Title, Box, ActionIcon} from '@mantine/core';
+import {Text, Group, Title, Box, ActionIcon} from '@mantine/core';
 import {notify, notifyError, notifyTransaction, notifyTransactionUpdate} from '../utils/notify';
-import {ArrowUpCircleIcon, ArrowDownCircleIcon, ArrowPathIcon} from '@heroicons/react/24/solid';
+import {IconRefresh, IconArrowUpCircle, IconArrowDownCircle} from '@tabler/icons';
 import getContractAddress from '../constants/addresses';
 import {truncateAddress} from '../utils/utility';
+import {useAccount, useSigner} from 'wagmi';
 
 const CounterContractPage: NextPage = () => {
-  const {wallet} = useWalletContext();
+  const {data} = useSigner();
   const [contract, setContract] = useState<CounterContract>();
   // contract view states
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    if (wallet) {
+    if (data) {
       try {
-        const contractAddress = getContractAddress('Counter', wallet.chainId);
+        const contractAddress = getContractAddress('Counter', 31337); // todo: give chain id dynamically here
         // TODO: add deployment check here
         notify('Contract Connected', 'Connected to ' + truncateAddress(contractAddress), 'success');
-        setContract(Counter__factory.connect(contractAddress, wallet.library.getSigner(wallet.address)));
+        setContract(Counter__factory.connect(contractAddress, data));
       } catch (e: any) {
         notifyError(e, 'Contract Not Found', false);
       }
@@ -30,7 +31,7 @@ const CounterContractPage: NextPage = () => {
     return () => {
       setContract(undefined);
     };
-  }, [wallet]);
+  }, [data]);
 
   // on contract load
   useEffect(() => {
@@ -124,13 +125,13 @@ const CounterContractPage: NextPage = () => {
 
           <Group my="xl" position="center">
             <ActionIcon onClick={handleCountUp} color="secondary">
-              <ArrowUpCircleIcon />
+              <IconArrowUpCircle />
             </ActionIcon>
             <ActionIcon onClick={handleCountDown} color="secondary">
-              <ArrowDownCircleIcon />
+              <IconArrowDownCircle />
             </ActionIcon>
             <ActionIcon onClick={handleRefresh}>
-              <ArrowPathIcon />
+              <IconRefresh />
             </ActionIcon>
           </Group>
         </>

@@ -2,35 +2,28 @@ import {Popover, ActionIcon, Title, Group, Stack, Text, Image} from '@mantine/co
 import {BigNumber} from 'ethers';
 import {formatEther} from 'ethers/lib/utils';
 import {useState, useEffect, FC} from 'react';
-import {WalletIcon} from '@heroicons/react/24/solid';
-import getNetwork, {unknownNetwork} from '../constants/networks';
-import {useWalletContext} from '../context/wallet.context';
-import type {NetworkInfoType} from '../types/networks';
+import {IconWallet} from '@tabler/icons';
+// import getNetwork, {unknownNetwork} from '../constants/networks';
+// import {useWalletContext} from '../context/wallet.context';
 import {truncateAddress} from '../utils/utility';
+import {useBalance, useAccount} from 'wagmi';
 
 const WalletDisplayButton: FC = () => {
-  const {wallet} = useWalletContext();
-  const [opened, setOpened] = useState(false);
-  const [balance, setBalance] = useState<BigNumber>(BigNumber.from(0));
-  const [network, setNetwork] = useState<NetworkInfoType>(unknownNetwork);
+  // const {wallet} = useWalletContext();
+  const {address, isConnected, connector} = useAccount();
+  const {data} = useBalance({
+    address,
+  });
 
-  useEffect(() => {
-    if (wallet) {
-      wallet.library.getBalance(wallet.address).then(val => setBalance(val));
-      setNetwork(getNetwork(wallet.chainId));
-    } else {
-      setBalance(BigNumber.from(0));
-      setNetwork(unknownNetwork);
-    }
-  }, [wallet]);
+  const [opened, setOpened] = useState(false);
 
   return (
     <Popover
       opened={opened}
       onClose={() => setOpened(false)}
       target={
-        <ActionIcon disabled={wallet === undefined} onClick={() => setOpened(o => !o)}>
-          <WalletIcon fontSize="1.2em" />
+        <ActionIcon disabled={!isConnected} onClick={() => setOpened(o => !o)}>
+          <IconWallet size="1.2em" />
         </ActionIcon>
       }
       width="min(90vw,500px)"
@@ -38,27 +31,26 @@ const WalletDisplayButton: FC = () => {
       withArrow
       withCloseButton
     >
-      {wallet ? (
+      {isConnected && connector && address ? (
         <Group position="apart">
           <Stack>
             {/* Network Details */}
             <Title order={2}>Network</Title>
-            <Text size="xl">{network.chainName}</Text>
-            <Text color="dimmed">Chain ID: {wallet.chainId}</Text>
+            <Text size="xl">{connector.name}</Text>
+            {/* <Text color="dimmed">Chain ID: {wallet.chainId}</Text> */}
 
             {/* Wallet Details */}
             <Title order={2} mt="md">
               Wallet ID
             </Title>
-            <Text>{truncateAddress(wallet.address)}</Text>
+            <Text>{truncateAddress(address)}</Text>
 
             {/* Balance */}
             <Title order={2} mt="md">
               Balance
             </Title>
-            <Text>{formatEther(balance) + ' ' + network.nativeCurrency.symbol}</Text>
+            <Text>{data?.formatted}</Text>
           </Stack>
-          <Image src={network.iconURL} alt="network icon" m="md" width={150} height={200} fit="contain" />
         </Group>
       ) : (
         <Title p="lg">Wallet not connected.</Title>

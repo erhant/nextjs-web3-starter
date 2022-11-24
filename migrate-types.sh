@@ -4,10 +4,10 @@
 # Go to pwd
 cd "${0%/*}"
 
+# Define source and destination paths
 SOURCE='./contract-playground/types/typechain'
 DESTINATION='./frontend/types/typechain'
 
-### Migrate Types ###
 # Clean types there
 rm -rf $DESTINATION
 

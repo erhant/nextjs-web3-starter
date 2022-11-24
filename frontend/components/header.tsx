@@ -7,7 +7,7 @@ import {FC} from 'react';
 
 const Header: FC = () => {
   return (
-    <Box component="header" py="md" sx={{textAlign: 'center', borderBottom: '1px solid lightgray'}}>
+    <Box component="header" py="md" sx={{textAlign: 'center'}}>
       <Container>
         <Group>
           <Text

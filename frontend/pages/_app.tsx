@@ -6,8 +6,42 @@ import '../styles/globals.scss';
 // mantine theming
 import yourMantineTheme from '../themes/mantine';
 import {MantineProvider, ColorScheme, ColorSchemeProvider} from '@mantine/core';
-import {WalletContextWrapper} from '../context/wallet.context';
+
 import {NotificationsProvider} from '@mantine/notifications';
+// web3 connection
+import {WagmiConfig, createClient, defaultChains, configureChains} from 'wagmi';
+import {publicProvider} from 'wagmi/providers/public';
+import {MetaMaskConnector} from 'wagmi/connectors/metaMask';
+
+// create Wagmi client
+const myChains = [
+  // local hardhat
+  {
+    id: 31337,
+    name: 'Hardhat Local',
+    network: 'hardhat',
+    nativeCurrency: {
+      decimals: 18,
+      name: 'Ethereum',
+      symbol: 'ETH',
+    },
+    rpcUrls: {
+      default: 'http://localhost:8545',
+    },
+    blockExplorers: {
+      default: {name: '', url: ''},
+    },
+    testnet: true,
+  },
+  ...defaultChains,
+];
+const {chains, provider, webSocketProvider} = configureChains(myChains, [publicProvider()]);
+const client = createClient({
+  // autoConnect: true,
+  connectors: [new MetaMaskConnector({chains})],
+  provider,
+  webSocketProvider,
+});
 
 export default function App(props: AppProps & {colorScheme: ColorScheme}) {
   const {Component, pageProps} = props;
@@ -37,11 +71,11 @@ export default function App(props: AppProps & {colorScheme: ColorScheme}) {
             // you can change primaryColor w.r.t colorScheme here
           }}
         >
-          <WalletContextWrapper>
+          <WagmiConfig client={client}>
             <NotificationsProvider>
               <Component {...pageProps} />
             </NotificationsProvider>
-          </WalletContextWrapper>
+          </WagmiConfig>
         </MantineProvider>
       </ColorSchemeProvider>
     </>

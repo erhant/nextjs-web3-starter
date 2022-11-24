@@ -20,13 +20,13 @@ const Home: NextPage = () => {
             ['https://nextjs.org/', 'NextJS'],
             ['https://www.typescriptlang.org/', 'TypeScript'],
             ['https://mantine.dev/', 'MantineUI'],
-            ['https://heroicons.com/', 'Heroicons'],
-            ['https://github.com/Web3Modal/web3modal', 'Web3Modal'],
+            ['https://tabler-icons.io/', 'Tabler Icons'],
+            ['https://wagmi.sh/', 'Wagmi'],
             ['https://docs.ethers.io/v5/', 'Ethers'],
             ['https://hardhat.org/', 'Hardhat'],
             ['https://sass-lang.com/', 'SCSS'],
           ].map((c, i) => (
-            <Badge key={i} size="xl" variant="outline">
+            <Badge key={i} variant="outline">
               <Anchor href={c[0]}>{c[1]}</Anchor>
             </Badge>
           ))}

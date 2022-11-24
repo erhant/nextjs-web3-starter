@@ -1,5 +1,4 @@
 import {NextPage} from 'next';
-import {useWalletContext} from '../context/wallet.context';
 import {MyERC20__factory, MyERC20 as MyERC20Contract} from '../types/typechain/';
 import {useEffect, useState} from 'react';
 import Layout from '../components/layout';
@@ -9,9 +8,10 @@ import {BigNumber, ethers} from 'ethers';
 import getContractAddress from '../constants/addresses';
 import {formatUnits, parseUnits} from 'ethers/lib/utils';
 import {truncateAddress} from '../utils/utility';
+import {useSigner} from 'wagmi';
 
 const MyERC20ContractPage: NextPage = () => {
-  const {wallet} = useWalletContext();
+  const {data} = useSigner();
   const [contract, setContract] = useState<MyERC20Contract>();
   // contract view states
   const [tokenInfo, setTokenInfo] = useState<{totalSupply: number; name: string; symbol: string; decimals: number}>({
@@ -27,13 +27,13 @@ const MyERC20ContractPage: NextPage = () => {
 
   // wallet related effects
   useEffect(() => {
-    if (!wallet) return;
+    if (!data) return;
 
     try {
-      const contractAddress = getContractAddress('MyERC20', wallet.chainId);
+      const contractAddress = getContractAddress('MyERC20', 31337); // get chain id here
       // TODO: add deployment check here
       notify('Contract Connected', 'Connected to ' + truncateAddress(contractAddress), 'success');
-      setContract(MyERC20__factory.connect(contractAddress, wallet.library.getSigner(wallet.address)));
+      setContract(MyERC20__factory.connect(contractAddress, data));
     } catch (e: any) {
       notifyError(e, 'Contract Not Found', false);
     }
@@ -41,7 +41,7 @@ const MyERC20ContractPage: NextPage = () => {
     return () => {
       setContract(undefined);
     };
-  }, [wallet]);
+  }, [data]);
 
   // contract related effects
   useEffect(() => {
