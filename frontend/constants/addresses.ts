@@ -1,4 +1,5 @@
 import {ethers} from 'ethers';
+import {goerli, hardhat} from 'wagmi/chains';
 
 /**
  * Contract addresses for each ChainID.
@@ -6,10 +7,12 @@ import {ethers} from 'ethers';
  */
 const contractAddresses: Readonly<{[contractName: string]: {[chainId: number]: string | undefined}}> = {
   Counter: {
-    31337: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
+    [hardhat.id]: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
+    [goerli.id]: '0xf4A5360081b5F6F76BDad387B1Dc34EAAE1cEA33',
   },
   MyERC20: {
-    31337: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
+    [hardhat.id]: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
+    [goerli.id]: '0x2f1884D52127e0C6Cd46AC66f3fFb92f01f55435',
   },
 };
 

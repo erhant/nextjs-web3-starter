@@ -1,5 +1,4 @@
 import {NextPage} from 'next';
-// import {useWalletContext} from '../context/wallet.context';
 import {Counter__factory, Counter as CounterContract} from '../types/typechain/';
 import {useEffect, useState} from 'react';
 import Layout from '../components/layout';
@@ -8,18 +7,19 @@ import {notify, notifyError, notifyTransaction, notifyTransactionUpdate} from '.
 import {IconRefresh, IconArrowUpCircle, IconArrowDownCircle} from '@tabler/icons';
 import getContractAddress from '../constants/addresses';
 import {truncateAddress} from '../utils/utility';
-import {useAccount, useSigner} from 'wagmi';
+import {useNetwork, useSigner} from 'wagmi';
 
 const CounterContractPage: NextPage = () => {
   const {data} = useSigner();
+  const {chain} = useNetwork();
   const [contract, setContract] = useState<CounterContract>();
   // contract view states
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    if (data) {
+    if (data && chain) {
       try {
-        const contractAddress = getContractAddress('Counter', 31337); // todo: give chain id dynamically here
+        const contractAddress = getContractAddress('Counter', chain.id); // todo: give chain id dynamically here
         // TODO: add deployment check here
         notify('Contract Connected', 'Connected to ' + truncateAddress(contractAddress), 'success');
         setContract(Counter__factory.connect(contractAddress, data));
@@ -31,7 +31,7 @@ const CounterContractPage: NextPage = () => {
     return () => {
       setContract(undefined);
     };
-  }, [data]);
+  }, [data, chain]);
 
   // on contract load
   useEffect(() => {

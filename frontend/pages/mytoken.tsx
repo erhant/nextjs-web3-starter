@@ -8,10 +8,12 @@ import {BigNumber, ethers} from 'ethers';
 import getContractAddress from '../constants/addresses';
 import {formatUnits, parseUnits} from 'ethers/lib/utils';
 import {truncateAddress} from '../utils/utility';
-import {useSigner} from 'wagmi';
+import {useSigner, useNetwork, useAccount} from 'wagmi';
 
 const MyERC20ContractPage: NextPage = () => {
   const {data} = useSigner();
+  const {chain} = useNetwork();
+  const {address} = useAccount();
   const [contract, setContract] = useState<MyERC20Contract>();
   // contract view states
   const [tokenInfo, setTokenInfo] = useState<{totalSupply: number; name: string; symbol: string; decimals: number}>({
@@ -27,21 +29,21 @@ const MyERC20ContractPage: NextPage = () => {
 
   // wallet related effects
   useEffect(() => {
-    if (!data) return;
-
-    try {
-      const contractAddress = getContractAddress('MyERC20', 31337); // get chain id here
-      // TODO: add deployment check here
-      notify('Contract Connected', 'Connected to ' + truncateAddress(contractAddress), 'success');
-      setContract(MyERC20__factory.connect(contractAddress, data));
-    } catch (e: any) {
-      notifyError(e, 'Contract Not Found', false);
+    if (data && chain) {
+      try {
+        const contractAddress = getContractAddress('MyERC20', chain.id); // get chain id here
+        // TODO: add deployment check here
+        notify('Contract Connected', 'Connected to ' + truncateAddress(contractAddress), 'success');
+        setContract(MyERC20__factory.connect(contractAddress, data));
+      } catch (e: any) {
+        notifyError(e, 'Contract Not Found', false);
+      }
     }
 
     return () => {
       setContract(undefined);
     };
-  }, [data]);
+  }, [data, chain]);
 
   // contract related effects
   useEffect(() => {
@@ -61,23 +63,23 @@ const MyERC20ContractPage: NextPage = () => {
 
   // account & token related effects
   useEffect(() => {
-    if (!contract || !wallet) return;
+    if (!contract || !address) return;
 
     // get initial balance of this address
-    contract.balanceOf(wallet.address).then(
+    contract.balanceOf(address).then(
       balance => setBalance(Number(formatUnits(balance, tokenInfo.decimals))),
       e => notifyError(e, 'balanceOf')
     );
 
     // @todo: events are getting too much, we just want to subscribe to them from the point of login
     const listenTransfer: ethers.providers.Listener = (from: string, to: string, value: BigNumber) => {
-      if (from == wallet.address) {
+      if (from == address) {
         notify(
           'Transfer',
           `Sent ${formatUnits(value, tokenInfo.decimals)} ${tokenInfo.symbol} to ${truncateAddress(to)}`,
           'info'
         );
-      } else if (to == wallet.address) {
+      } else if (to == address) {
         notify(
           'Transfer',
           `Received ${formatUnits(value, tokenInfo.decimals)} ${tokenInfo.symbol} to ${truncateAddress(from)}`,
@@ -86,7 +88,7 @@ const MyERC20ContractPage: NextPage = () => {
       }
 
       // update balance
-      contract.balanceOf(wallet.address).then(
+      contract.balanceOf(address).then(
         balance => setBalance(Number(formatUnits(balance, tokenInfo.decimals))),
         e => notifyError(e, 'balanceOf')
       );
@@ -99,16 +101,16 @@ const MyERC20ContractPage: NextPage = () => {
       );
     };
 
-    contract.on(contract.filters.Transfer(wallet.address, null), listenTransfer);
-    contract.on(contract.filters.Transfer(null, wallet.address), listenTransfer);
-    contract.on(contract.filters.Approval(null, wallet.address), listenApproval);
+    contract.on(contract.filters.Transfer(address, null), listenTransfer);
+    contract.on(contract.filters.Transfer(null, address), listenTransfer);
+    contract.on(contract.filters.Approval(null, address), listenApproval);
 
     return () => {
-      contract.off(contract.filters.Transfer(wallet.address, null), listenTransfer);
-      contract.off(contract.filters.Transfer(null, wallet.address), listenTransfer);
-      contract.off(contract.filters.Approval(null, wallet.address), listenApproval);
+      contract.off(contract.filters.Transfer(address, null), listenTransfer);
+      contract.off(contract.filters.Transfer(null, address), listenTransfer);
+      contract.off(contract.filters.Approval(null, address), listenApproval);
     };
-  }, [contract, wallet, tokenInfo]);
+  }, [contract, address, tokenInfo]);
 
   const handleSend = async () => {
     if (contract) {
@@ -129,11 +131,11 @@ const MyERC20ContractPage: NextPage = () => {
   };
 
   const handleReceive = async () => {
-    if (contract) {
+    if (contract && address) {
       try {
         const tx = await contract.transferFrom(
           targetAddress,
-          wallet!.address,
+          address,
           parseUnits(tokenAmount.toString(), tokenInfo.decimals)
         );
         const nid = notifyTransaction(tx);

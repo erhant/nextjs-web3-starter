@@ -6,7 +6,7 @@ import {IconWallet} from '@tabler/icons';
 // import getNetwork, {unknownNetwork} from '../constants/networks';
 // import {useWalletContext} from '../context/wallet.context';
 import {truncateAddress} from '../utils/utility';
-import {useBalance, useAccount} from 'wagmi';
+import {useBalance, useAccount, useNetwork} from 'wagmi';
 
 const WalletDisplayButton: FC = () => {
   // const {wallet} = useWalletContext();
@@ -14,6 +14,7 @@ const WalletDisplayButton: FC = () => {
   const {data} = useBalance({
     address,
   });
+  const {chain} = useNetwork();
 
   const [opened, setOpened] = useState(false);
 
@@ -36,8 +37,8 @@ const WalletDisplayButton: FC = () => {
           <Stack>
             {/* Network Details */}
             <Title order={2}>Network</Title>
-            <Text size="xl">{connector.name}</Text>
-            {/* <Text color="dimmed">Chain ID: {wallet.chainId}</Text> */}
+            <Text size="xl">{chain && chain.name}</Text>
+            <Text color="dimmed">Chain ID: {chain && chain.id}</Text>
 
             {/* Wallet Details */}
             <Title order={2} mt="md">
